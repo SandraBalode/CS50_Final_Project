@@ -1,4 +1,4 @@
-Basicly a coppy of FitBod => FitBudi
+Basicly a coppy of => FitBudi
 
 1. Create a workout plan (daily, weekly, 2 weeks, monthly (can choose time frame of the workout plan))
     Also provide a pre-designed workout plan as well as the option to create their own plan.
