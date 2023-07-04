@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, date
 import sqlite3
 from sqlite3 import Error
-from helpers import apology, login_required, usd
+from helpers import apology, login_required, usd, dict_factory
 
 # Configure application
 app = Flask(__name__)
@@ -22,7 +22,7 @@ Session(app)
 
 # Configure sqlite database
 connection = sqlite3.connect("database.db", check_same_thread=False)
-connection.row_factory = sqlite3.Row
+connection.row_factory = dict_factory
 
 db = connection.cursor()
 
@@ -56,14 +56,13 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        temp = db.execute("SELECT * FROM users WHERE username = ?", (request.form.get("username"),))
-        rows = temp.fetchall()
+        rows = db.execute("SELECT * FROM users WHERE username = ?", [request.form.get("username")]).fetchall()
 
         print(request.form.get("username"))
         print(rows)
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["password"], (request.form.get("password"),)):
+        if len(rows) != 1 or not check_password_hash(rows[0]["password"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
@@ -116,6 +115,7 @@ def register():
         username = request.form.get("username")
         hashed_psw = generate_password_hash(request.form.get("password"))
         db.execute("INSERT INTO users (username, password) VALUES (?, ?);", (username, hashed_psw))
+        connection.commit()
 
         return redirect("/login")
 
