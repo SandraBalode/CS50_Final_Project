@@ -1,4 +1,4 @@
-Basicly a coppy of => FitBudi
+FitBudi (Think of a better name!!)
 
 1. Create a workout plan (daily, weekly, 2 weeks, monthly (can choose time frame of the workout plan))
     Also provide a pre-designed workout plan as well as the option to create their own plan.
@@ -17,7 +17,7 @@ Basicly a coppy of => FitBudi
 
 
 Core features:
-1. User registration ad profiles
+1. (DONE) User registration and profiles
 2. Excercise library
 3. Create custom workout plan (excersize sets)
 4. Do the workout plan
