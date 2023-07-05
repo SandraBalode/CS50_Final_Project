@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Workouts
+{% endblock %}
+
+
+{% block main %} 
+    {% if len == 0 %}
+        <p>No workouts here yet.</p>
+        <div class="mb-3">
+        <button class="btn btn-dark" name="" href="#">Create a new workout from scratch</button>
+        </div>
+        <div class="mb-3">
+        <button class="btn btn-dark" name="" href="#">Generate a new workout</button>
+        </div>
+    {% else %}
+        <p>Here are listed all the workouts created by this user.</p>
+        
+        <div class="mb-3">
+        <button class="btn btn-dark" name="" href="#">Create a new workout from scratch</button>
+        </div>
+        <div class="mb-3">
+        <button class="btn btn-dark" name="" href="#">Generate a new workout</button>
+        </div>
+        
+    {% endif %}
+{% endblock %}

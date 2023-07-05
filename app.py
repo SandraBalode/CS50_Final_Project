@@ -123,3 +123,9 @@ def register():
         return render_template("register.html")
 
 
+@app.route("/my_workouts", methods=["GET", "POST"])
+def my_workouts():
+
+
+    len = 0
+    return render_template("my_workouts.html", len=len)
