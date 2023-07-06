@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    All excercises
+{% endblock %}
+
+
+{% block main %} 
+    {% if length == 0 %}
+        <p>No excercises here yet.</p>
+    {% else %}
+        <!-- three toggle buttons (radio buttons?) All/By Muscle/Categories -->
+
+        <table class="table">
+            {% for row in excercises %}
+                <tr>
+                    <td>{{ row['name'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+            
+
+        <!-- Each excercise is a clickable div that pops open that exces info page-->
+        <!-- with that downward arrow thing > and v when closed or open ? -->
+        <!-- has a video and instructions -->
+        <!-- has a button that leads to Excercise History -->
+    {% endif %}
+{% endblock %}

@@ -126,6 +126,16 @@ def register():
 @app.route("/my_workouts", methods=["GET", "POST"])
 def my_workouts():
 
-
-    len = 0
+    length = 0
     return render_template("my_workouts.html", len=len)
+
+
+@app.route("/excercises", methods=["GET", "POST"])
+def excercises():
+
+    temp = db.execute("SELECT * FROM excercises;")
+    excercises = temp.fetchall()
+    print(excercises)
+    length = len(excercises)
+
+    return render_template("excercises.html", length=length, excercises=excercises)
