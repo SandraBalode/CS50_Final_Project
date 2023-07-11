@@ -103,7 +103,6 @@ def register():
         # Ensure username does not already exist
         temp = db.execute("SELECT * FROM users WHERE username = ?", (request.form.get("username"),))
         rows = temp.fetchall()
-        print(rows)
         if len(rows) == 1:
             return apology("Choose a different username", 400)
 
@@ -127,15 +126,14 @@ def register():
 def my_workouts():
 
     length = 0
-    return render_template("my_workouts.html", len=len)
+    return render_template("my_workouts.html", length=length)
 
 
 @app.route("/excercises", methods=["GET", "POST"])
 def excercises():
 
-    temp = db.execute("SELECT * FROM excercises;")
+    temp = db.execute("SELECT * FROM excercises ORDER BY name;")
     excercises = temp.fetchall()
-    print(excercises)
     length = len(excercises)
 
     return render_template("excercises.html", length=length, excercises=excercises)

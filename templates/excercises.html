@@ -10,14 +10,35 @@
         <p>No excercises here yet.</p>
     {% else %}
         <!-- three toggle buttons (radio buttons?) All/By Muscle/Categories -->
+        <div class="btn-group py-5" role="group" aria-label="Radio Buttons">
+            <button type="button" class="btn btn-outline-secondary">All</button>
+            <button type="button" class="btn btn-outline-secondary">By Muscle</button>
+            <button type="button" class="btn btn-outline-secondary" hidden>Categories</button>
+        </div>
+          
 
-        <table class="table">
+        <div class="list-group w-auto container">
             {% for row in excercises %}
-                <tr>
-                    <td>{{ row['name'] }}</td>
-                </tr>
+            <div class="row justify-content-center">    
+                <div class="col-lg-6 col-md-10 btn-group" role="group">
+
+                    <button type="button" class="btn btn-light">
+                        <h1 class="text-muted">&plus;</h1>
+                    </button>
+
+                    <button class="list-group-item list-group-item-action d-flex gap-3 py-3 col-md-4" href="#" type="button" aria-current="true">
+                        <img class="flex-shrink-0" src="https://github.com/twbs.png" alt="twbs" width="32" height="32">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h5 class="mb=0">{{ row['name'] }}</h5>
+                            </div>
+                            <small class="opacity-50 text-nowrap">></small>
+                        </div>                    
+                    </button>
+                </div>
+            </div>
             {% endfor %}
-        </table>
+        </div>
             
 
         <!-- Each excercise is a clickable div that pops open that exces info page-->
