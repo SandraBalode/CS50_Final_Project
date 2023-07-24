@@ -132,7 +132,25 @@ def my_workouts():
 @app.route("/excercises", methods=["GET", "POST"])
 def excercises():
 
-    temp = db.execute("SELECT * FROM excercises ORDER BY name;")
+    temp = db.execute(
+                """
+                WITH primary_muscles AS (
+                SELECT exc_primary_rel.exc_id AS exc_id, muscles.name AS primary_muscle FROM exc_primary_rel
+                LEFT JOIN muscles
+                ON exc_primary_rel.muscle_id = muscles.id
+                ),
+                secondary_muscles AS (
+                SELECT exc_secondary_rel.exc_id AS exc_id, muscles.name AS secondary_muscle FROM exc_secondary_rel
+                LEFT JOIN muscles
+                ON exc_secondary_rel.muscle_id = muscles.id
+                )
+                SELECT * FROM excercises
+                LEFT JOIN primary_muscles
+                ON excercises.id = primary_muscles.exc_id
+                LEFT JOIN secondary_muscles
+                ON excercises.id = secondary_muscles.exc_id
+                ORDER BY excercises.name;
+                """)
     excercises = temp.fetchall()
     length = len(excercises)
 
