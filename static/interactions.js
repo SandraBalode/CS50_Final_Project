@@ -1,4 +1,27 @@
 
+const all_exc_btn = document.querySelector(".all_exc_btn");
+const by_muscle_btn = document.querySelector(".by_muscle_btn");
+const categories_btn = document.querySelector(".categories_btn");
+
+all_exc_btn.addEventListener('click', function() {
+    document.querySelector('#by_muscle_table').style.display = 'none';
+    document.querySelector('#category_table').style.display = 'none';
+    document.querySelector('#all_exc_table').style.display = 'block';
+})
+
+by_muscle_btn.addEventListener('click', function() {    
+    document.querySelector('#category_table').style.display = 'none';
+    document.querySelector('#all_exc_table').style.display = 'none';
+    document.querySelector('#by_muscle_table').style.display = 'block';
+})
+
+categories_btn.addEventListener('click', function() {
+    document.querySelector('#by_muscle_table').style.display = 'none';
+    document.querySelector('#all_exc_table').style.display = 'none';
+    document.querySelector('#category_table').style.display = 'block';    
+})
+
+
 
 const instruction_btns = document.querySelectorAll('.instruction_btn');
 const target_btns = document.querySelectorAll('.target_btn');

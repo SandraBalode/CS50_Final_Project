@@ -154,4 +154,7 @@ def excercises():
     excercises = temp.fetchall()
     length = len(excercises)
 
-    return render_template("excercises.html", length=length, excercises=excercises)
+    temp = db.execute("SELECT * FROM muscles;")
+    muscles = temp.fetchall()
+
+    return render_template("excercises.html", length=length, excercises=excercises, muscles=muscles)

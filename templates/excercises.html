@@ -10,11 +10,11 @@
         <p>No excercises here yet.</p>
     {% else %}
         <!-- three toggle buttons (radio buttons?) All/By Muscle/Categories -->
-        <!-- <div class="btn-group py-5" role="group" aria-label="Radio Buttons">
-            <button type="button" class="btn btn-outline-secondary">All</button>
-            <button type="button" class="btn btn-outline-secondary">By Muscle</button>
-            <button type="button" class="btn btn-outline-secondary">Categories</button>
-        </div> -->
+        <div class="btn-group py-5" role="group" aria-label="Radio Buttons">
+            <button type="button" class="btn btn-outline-secondary all_exc_btn">All</button>
+            <button type="button" class="btn btn-outline-secondary by_muscle_btn">By Muscle</button>
+            <button type="button" class="btn btn-outline-secondary categories_btn">Categories</button>
+        </div>
           
         <div class="accordion container" id="all_exc_table">
             {% for row in excercises %}           
@@ -98,6 +98,72 @@
                 </div>                
                 
             {% endfor %}
+        </div>
+
+        <div class="" id="by_muscle_table" style="display: none;">
+            
+            <div class="container">
+                <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 g-3">
+                    {% for row in muscles %}
+
+                        <div class="col"  data-bs-toggle="modal" data-bs-target="#muscle_{{ row['id'] }}">
+                            <div class="card shadow-sm">
+                                <img class="card-img-top clickable-img" src="/static/img/muscles/{{row['name']}}.png" alt="{{row['name']}}" loading="lazy" width="50%" height="50%">
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ row['name'] }}</p>                                                        
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="muscle_{{ row['id'] }}" tabindex="-1" aria-labelledby="muscle_{{ row['id'] }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="muscle_{{ row['id'] }}">{{ row['name'] }}</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="list-group list-group-flush border-bottom scrollarea align-items-start">
+                                            {% for exc in excercises %}
+
+                                                {% if row['name'] == exc['primary_muscle'] %}
+
+                                                    <button class="list-group-item list-group-item-action py-3 lh-sm" disabled type="button">
+                                                        <img src="/static/img/{{exc['id']}}.png" alt="{{ exc['id'] }}" width="64" height="64">
+                                                        <p class="lead">
+                                                            {{ exc['name'] }}
+                                                        </p>
+                                                    </button>
+
+                                                {% elif row['name'] == exc['secondary_muscle'] %}
+
+                                                    <button class="list-group-item list-group-item-action py-3 lh-sm" disabled type="button">
+                                                        <img src="/static/img/{{exc['id']}}.png" alt="{{ exc['id'] }}" width="64" height="64">
+                                                        <p class="lead">
+                                                            {{ exc['name'] }}
+                                                        </p>
+                                                    </button>
+                                                
+                                                {% endif %}
+                                                
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>                                    
+                                    </div>
+                                </div>
+                              </div>                            
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>                        
+            
+        </div>
+
+        <div class="" id="category_table" style="display: none;">
+            <p>TBD</p>
         </div>
           
 
