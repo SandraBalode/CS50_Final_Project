@@ -10,11 +10,11 @@
         <p>No excercises here yet.</p>
     {% else %}
         <!-- three toggle buttons (radio buttons?) All/By Muscle/Categories -->
-        <div class="btn-group py-5" role="group" aria-label="Radio Buttons">
+        <!-- <div class="btn-group py-5" role="group" aria-label="Radio Buttons">
             <button type="button" class="btn btn-outline-secondary">All</button>
             <button type="button" class="btn btn-outline-secondary">By Muscle</button>
             <button type="button" class="btn btn-outline-secondary">Categories</button>
-        </div>
+        </div> -->
           
         <div class="accordion container" id="all_exc_table">
             {% for row in excercises %}           
@@ -29,9 +29,7 @@
                     </h2>
 
                     <div id="collapse{{ row['id'] }}" class="accordion-collapse collapse" aria-labelledby="heading{{ row['id'] }}">
-                        <div class="accordion-body">
-                            <!--video of said exc-->
-                            <!-- toggleable buttons to switch from instruction/target muscles/equipement-->
+                        <div class="accordion-body">                            
                             
                             <div class="container col-xxl-8 px-4 py-5">
                                 <div class="flex-lg-row-reverse align-items-center g-5 py-5">
