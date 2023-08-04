@@ -6,23 +6,312 @@
 
 
 {% block main %} 
-    {% if length == 0 %}
-        <p>No workouts here yet.</p>
-        <div class="mb-3">
-        <button class="btn btn-dark" name="" href="#">Create a new workout from scratch</button>
-        </div>
-        <div class="mb-3">
-        <button class="btn btn-dark" name="" href="#">Generate a new workout</button>
-        </div>
-    {% else %}
-        <p>Here are listed all the workouts created by this user.</p>
+    <div class="row g-5">
+        <div class="col-md-2">
+
+            <div class="position-sticky" style="top: 2rem;">
+                
+                <h4 class="fst-italic">My Workout Plans</h4>
+                <hr class="d-none d-md-block my-2">
         
-        <div class="mb-3">
-        <button class="btn btn-dark" name="" href="#">Create a new workout from scratch</button>
+                <div class="list-group list-group-flush border-bottom scrollarea">  
+                    
+                    <form action="/my_workouts" method="post">
+                        {% if length == 0 %}
+
+                            <div class="d-flex w-100 align-items-center justify-content-center py-2">
+                                <p class="mb-1">No plans created.</p>                          
+                            </div>
+
+                        {% else %}
+
+                            {% for row in plans %}
+
+                                <button href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true" type="submit" value="{{row['id']}}" name="selectPlanBtn">
+                                    <div class="d-flex w-100 align-items-center justify-content-center">
+                                    <p class="mb-1">{{ row['name'] }}</p>                          
+                                    </div>
+                                </button> 
+
+                            {% endfor %}   
+                                             
+                        {% endif %}
+
+                        <hr>
+
+                        <button href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true" type="button" data-bs-toggle="modal" data-bs-target="#createPlan">
+                            <div class="d-flex w-100 align-items-center justify-content-center">
+                            <strong class="mb-1">Create a new plan</strong>                      
+                            </div>
+                        </button>
+
+                        
+                        <button href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true" type="button" data-bs-toggle="modal" data-bs-target="#deletePlan">
+                            <div class="d-flex w-100 align-items-center justify-content-center">
+                            <strong class="mb-1">Delete a plan</strong>                      
+                            </div>
+                        </button>
+                    </form>
+                  
+                </div>
+
+            </div>
+
         </div>
-        <div class="mb-3">
-        <button class="btn btn-dark" name="" href="#">Generate a new workout</button>
+
+        <div class="col-md-10">
+
+            <div class="row justify-content-start">
+                <div class="col-auto">
+                    <h1 class="display-6">{{ activePlanName }}</h1>
+                </div>
+            </div>
+
+            <div class="row justify-content-start py-3">
+                <div class="col-auto">
+                    <p class="lead">{{ exc_count }} Excercises</p>
+                </div>
+
+                <div class="col-auto">
+                    <button type="button" class="btn btn-light" aria-current="true" data-bs-toggle="modal" data-bs-target="#addExc">Add excercise</button>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-10">
+                    
+                    <form action="/my_workouts" method="post">
+                        {% for row in plan_details %}
+                            
+                            <div class="row mb-3">   <!-- This should be a clickable section? -->
+
+                                <div class="col-1 align-self-center">
+                                    <p class="lead">{{ loop.index }}</p>
+                                </div>
+
+                                <div class="col-2">
+                                    <img src="/static/img/{{row['exc_id']}}.png" alt="{{ row['exc_id'] }}" width="64" height="64">
+                                </div>
+
+                                <div class="col-5">
+                                    <p class="lead mb-0">{{ row['name'] }}</p>
+                                    <small class="text-muted">
+                                        
+                                        {{ row['set_count'] }} sets
+                                        
+                                        {% if row['rep_count'] %}
+                                            &middot; {{ row['rep_count'] }} reps
+                                        {% endif %}
+
+                                        {% if row['weight'] %}
+                                            &middot; {{ row['weight'] }} kg
+                                        {% endif %}
+                                        
+                                        {% if row['duration'] %}
+                                            &middot; {{ row['duration'] }} sec
+                                        {% endif %}
+
+                                    </small>
+                                </div>
+
+                                <div class="col-2 align-self-center">
+                                    <button class="btn btn-outline-secondary border-0" type="submit" name="removeExc" value="{{row['exc_id']}}">
+                                        <small>Remove</small>
+                                    </button>
+                                </div>
+
+                            </div>
+                            
+                        {% endfor %}
+                    </form>
+
+                </div>
+            </div>
+            
+            <div class="row justify-content-start py-5 px-5">
+                <div class="col-2 px-5">
+                    <button type="button" class="btn btn-dark btn-lg">Start Workout</button>
+                </div>
+            </div>
+
         </div>
-        
-    {% endif %}
+
+    </div>
+
+    <!-- create_plan Modal -->
+    <div class="modal fade" id="createPlan" tabindex="-1" aria-labelledby="createPlanLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="createPlanLabel">Insert the name of your new workout plan.</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="/my_workouts" method="post">
+                    <div class="mb-3">
+                        <label for="plan-name" class="col-form-label">Name</label>
+                        <input type="text" class="form-control" id="plan-name" name="plan-name" required>
+                    </div> 
+                    
+                    
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark" id="createPlan" name="submitBtn" value="createPlan">Create a new plan</button>
+           
+                </form>
+                
+            </div>
+            
+          </div>
+        </div>
+    </div>
+
+    <!-- delete_plan Modal -->
+    <div class="modal fade" id="deletePlan" tabindex="-1" aria-labelledby="deletePlanLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="deletePlanLabel">Which workout plan do you wish to delete?</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="/my_workouts" method="post">
+                    <div class="form-check">
+
+                        {% for row in plans %}
+
+                            <input type="radio" class="btn-check" name="plans" value="{{ row['id'] }}" id="{{ row['id'] }}" autocomplete="off">
+                            <label class="btn btn-outline-dark my-1" for="{{ row['id'] }}">{{ row['name'] }}</label>  
+                            <br>                      
+
+                        {% endfor %}
+
+                    </div> 
+                    
+                    
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark" id="deletePlan" name="submitBtn" value="deletePlan">Delete selected plan</button>
+           
+                </form>
+                
+            </div>
+            
+          </div>
+        </div>
+    </div>
+
+    <!-- add excercise Modal -->
+    <div class="modal fade" id="addExc" tabindex="-1" aria-labelledby="addExcLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="addExcLabel">Choose an exercise to add.</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="btn-group py-5" role="group" aria-label="Radio Buttons" id="btnGroup">
+                    <button type="button" class="btn btn-outline-dark all_exc_btn">All</button>
+                    <button type="button" class="btn btn-outline-dark by_muscle_btn">By Muscle</button>                    
+                </div>
+
+                <form action="/my_workouts" method="post">
+
+                    <div class="list-group py-4" id="all_exc_table">
+                        
+                        {% for row in exercises %}
+
+                            <label class="list-group-item form-check">
+                                <input type="radio" class="form-check-input me-1" name="excOptions" value="{{ row['id'] }}" id="{{ row['id'] }}" autocomplete="off">
+                                <div class="row">
+                                    <img src="/static/img/{{row['id']}}.png" class="col-2" alt="{{ row['id'] }}" width="64" height="64">
+                                    <p class="lead px-4 col-auto">{{ row['name'] }}</p>
+                                </div>
+                            </label>                             
+
+                        {% endfor %}
+
+                    </div> 
+
+                    <div class="accordion container py-4" id="by_muscle_table" style="display: none;">
+
+                        {% for muscle in muscles %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed h-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ muscle['id'] }}" aria-expanded="true" aria-controls="collapse{{ muscle['id'] }}">
+                                        <div class="row">
+                                            <img src="/static/img/muscles/{{ muscle['name'] }}.png" class="col-auto" alt="{{ muscle['name'] }}" width="64" height="64">
+                                            <p class="lead col-auto">{{ muscle['name'] }}</p>
+                                        </div>
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="collapse{{ muscle['id'] }}" class="accordion-collapse collapse" aria-labelledby="heading{{ muscle['id'] }}">
+                                
+                                <div class="list-group py-4">
+
+                                    {% for exc in exercises %}
+
+                                        {% if muscle['name'] == exc['primary_muscle'] %}
+                                            <label class="list-group-item form-check">
+                                                <input type="radio" class="form-check-input me-1" name="excOptions" value="{{ exc['id'] }}" id="{{ exc['id'] }}" autocomplete="off">
+                                                <div class="row">
+                                                    <img src="/static/img/{{exc['id']}}.png" class="col-2" alt="{{ exc['id'] }}" width="64" height="64">
+                                                    <p class="lead px-4 col-auto">{{ exc['name'] }}</p>
+                                                </div>
+                                            </label> 
+                                        {% elif muscle['name'] == exc['secondary_muscle'] %}
+                                            <label class="list-group-item form-check">
+                                                <input type="radio" class="form-check-input me-1" name="excOptions" value="{{ exc['id'] }}" id="{{ exc['id'] }}" autocomplete="off">
+                                                <div class="row">
+                                                    <img src="/static/img/{{exc['id']}}.png" class="col-2" alt="{{ exc['id'] }}" width="64" height="64">
+                                                    <p class="lead px-4 col-auto">{{ exc['name'] }}</p>
+                                                </div>
+                                            </label> 
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+                        {% endfor %}
+                                                
+                    </div>
+
+                    <div class="" style="display: none;" id="excDetails" >
+                    
+                        <label for="repCount" class="col-form-label mr2">Number of reps</label>
+                        <input type="number" class="form-control mr-sm-2" id="repCount" name="repCount" min="1" step="1" placeholder="Enter number of reps">
+                        <br>
+                        <label for="setCount" class="col-form-label mr2">Number of sets</label>
+                        <input type="number" class="form-control mr-sm-2" id="setCount" name="setCount" min="1" step="1" placeholder="Enter number of sets">
+                        <br>
+                        <label for="weight" class="col-form-label mr2">Weight</label>
+                        <input type="number" class="form-control mr-sm-2" id="weight" name="weight" step="1" placeholder="Enter weight to be used">
+                        <br>
+                        <label for="duration" class="col-form-label mr2">Time in seconds</label>
+                        <input type="number" class="form-control mr-sm-2" id="duration" name="duration" step="1" placeholder="Enter the duration of the exc in seconds">
+                        <br>
+               
+                    </div>
+                    
+                    <div class="row justify-content-end">
+                        <button type="button" class="btn btn-outline-dark col-auto px-2" data-bs-dismiss="modal" id="closeBtn">Close</button>
+                        <button type="button" class="btn btn-dark col-auto mx-2" id="addExcBtn">Add excercise</button>
+                    
+                        <button type="submit" class="btn btn-dark col-auto mx-2" name="submitBtn" value="addExc" style="display: none;" id="excDetailsBtn">Ok</button>
+
+                    </div>
+                    
+                </form>
+                
+            </div>
+            
+          </div>
+        </div>
+    </div>
+
 {% endblock %}

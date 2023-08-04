@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    All excercises
+    Excercises
 {% endblock %}
 
 
@@ -26,6 +26,7 @@
                             <img src="/static/img/{{row['id']}}.png" alt="{{ row['id'] }}" width="64" height="64">
                             {{ row['name'] }}
                         </button>
+
                     </h2>
 
                     <div id="collapse{{ row['id'] }}" class="accordion-collapse collapse" aria-labelledby="heading{{ row['id'] }}">
@@ -173,5 +174,5 @@
         <!-- has a button that leads to Excercise History -->
     {% endif %}
 
-    <script src="{{url_for('static', filename='interactions.js')}}"></script>
+    
 {% endblock %}

@@ -1,3 +1,7 @@
+html, body {
+    height: 100%;
+  }
+
 .clickable-img {
   transition: transform 0.3s ease-in-out;
 }
@@ -5,4 +9,10 @@
 .clickable-img:hover {
   transform: scale(1.1);
   cursor: pointer;
+}
+
+
+.accordion-header {
+    background-color: #f5f8fa;
+    color: #000000;
 }

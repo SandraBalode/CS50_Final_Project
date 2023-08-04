@@ -5,21 +5,34 @@ const categories_btn = document.querySelector(".categories_btn");
 
 all_exc_btn.addEventListener('click', function() {
     document.querySelector('#by_muscle_table').style.display = 'none';
-    document.querySelector('#category_table').style.display = 'none';
     document.querySelector('#all_exc_table').style.display = 'block';
+
+    if (document.querySelector('#category_table')) {
+        document.querySelector('#category_table').style.display = 'none';
+    }
 })
 
-by_muscle_btn.addEventListener('click', function() {    
-    document.querySelector('#category_table').style.display = 'none';
+by_muscle_btn.addEventListener('click', function() {        
     document.querySelector('#all_exc_table').style.display = 'none';
     document.querySelector('#by_muscle_table').style.display = 'block';
+
+    if (document.querySelector('#category_table')) {
+        document.querySelector('#category_table').style.display = 'none';
+    }
 })
 
-categories_btn.addEventListener('click', function() {
-    document.querySelector('#by_muscle_table').style.display = 'none';
-    document.querySelector('#all_exc_table').style.display = 'none';
-    document.querySelector('#category_table').style.display = 'block';    
-})
+if (document.querySelector('#category_table')) {
+
+    categories_btn.addEventListener('click', function() {
+        document.querySelector('#by_muscle_table').style.display = 'none';
+        document.querySelector('#all_exc_table').style.display = 'none';   
+    
+        if (document.querySelector('#category_table')) {
+            document.querySelector('#category_table').style.display = 'none';
+        }
+    })
+}
+
 
 
 
@@ -125,4 +138,41 @@ equipement_btns.forEach(function(btn) {
         })
                
     })
+})
+
+
+// Adding a new exercise to workout program
+const addExcBtn = document.querySelector("#addExcBtn");
+const excDetailsBtn = document.querySelector('#excDetailsBtn');
+const closeBtn = document.querySelector('#closeBtn');
+const btnGroup = document.querySelector('#btnGroup')
+
+addExcBtn.addEventListener('click', function() {
+    document.querySelector('#btnGroup').style.display = 'none';
+    document.querySelector('#addExcBtn').style.display = 'none';
+
+    document.querySelector('#by_muscle_table').style.display = 'none';
+    document.querySelector('#all_exc_table').style.display = 'none';
+
+    if (document.querySelector('#category_table')) {
+        document.querySelector('#category_table').style.display = 'none';
+    }
+
+    document.querySelector('#excDetails').style.display = 'block';
+    document.querySelector('#excDetailsBtn').style.display = 'block';
+})
+
+closeBtn.addEventListener('click', function() {
+
+    document.querySelector('#btnGroup').style.display = 'block';
+    document.querySelector('#addExcBtn').style.display = 'block';
+    document.querySelector('#by_muscle_table').style.display = 'none';
+    document.querySelector('#all_exc_table').style.display = 'block';
+
+    if (document.querySelector('#category_table')) {
+        document.querySelector('#category_table').style.display = 'none';
+    }
+
+    document.querySelector('#excDetails').style.display = 'none';
+    document.querySelector('#excDetailsBtn').style.display = 'none';
 })
