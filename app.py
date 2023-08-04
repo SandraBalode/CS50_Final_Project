@@ -8,6 +8,8 @@ from datetime import datetime, date
 import sqlite3
 from sqlite3 import Error
 from helpers import apology, login_required, usd, dict_factory
+from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
+from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
 
 # Configure application
 app = Flask(__name__)
@@ -126,15 +128,9 @@ def register():
 def my_workouts():
 
     # if this is the first time in this session then set last created as default value
-    if not session["lastActivePlan"]:
-        temp = db.execute("""
-                            SELECT id FROM plans
-                            WHERE user_id=?
-                            ORDER BY id DESC
-                            LIMIT 1;
-                """, (session["user_id"],))
-        lap = temp.fetchone()
-        session['lastActivePlan'] = lap['id']
+    if not session["lastActivePlan"]:        
+        lastCreatedPlan = getLastCreatedPlan()
+        session['lastActivePlan'] = lastCreatedPlan['id']
 
 
     if request.method == "POST":
@@ -147,46 +143,26 @@ def my_workouts():
             if button_value == 'createPlan':
                 new_plan_name = request.form.get('plan-name')
 
+                # Only proceed with insertion if new_plan_name is not empty
                 if new_plan_name:
-                    # Only proceed with insertion if new_plan_name is not empty
-                    db.execute("""
-                            INSERT INTO plans (name, user_id)
-                            VALUES( ?, ? )
-                    """, (new_plan_name, session["user_id"]))
-
-                connection.commit()
+                    setNewPlan(new_plan_name)
                 
-                #set a new lastActive plan
-                temp = db.execute("""
-                            SELECT id FROM plans
-                            WHERE user_id=?
-                            ORDER BY id DESC
-                            LIMIT 1;
-                """, (session["user_id"],))
-                lap = temp.fetchone()
-                session['lastActivePlan'] = lap['id']
+                #set a new lastActive plan            
+                lastCreatedPlan = getLastCreatedPlan()
+                session['lastActivePlan'] = lastCreatedPlan['id']
                 
                 return redirect("/my_workouts")
             
             if button_value == 'deletePlan':
                 to_delete_plan = request.form.get('plans')
-                db.execute("""
-                        DELETE FROM plan_details
-                        WHERE plan_id=?
-                """, (to_delete_plan,))
+                deletePlan(to_delete_plan)
 
-                db.execute("""
-                        DELETE FROM plans
-                        WHERE id=?
-                """, (to_delete_plan,))
-
-                connection.commit()
                 return redirect("/my_workouts")
             
 
             if button_value == 'startWO':
 
-                return render_template('active_workout.html', plan=session['lastActivePlan'])
+                return redirect('/active_workout')
             
 
             if button_value == 'addExc':
@@ -196,7 +172,6 @@ def my_workouts():
 
                 rep_count = request.form.get('repCount')
                 if rep_count is None:
-                    print('rep_count is none')
                     rep_count = None
 
                 weight = request.form.get('weight')
@@ -207,114 +182,56 @@ def my_workouts():
                 if duration is None:
                     duration = None
 
-                db.execute("""
-                        INSERT INTO plan_details (exc_id, plan_id, set_count, rep_count, weight, duration)
-                        VALUES(?, ?, ?, ?, ?, ?)
-                    """, (selectedExcId, session['lastActivePlan'], set_count, rep_count, weight, duration))
-
-                connection.commit()
+                addExercise(selectedExcId, set_count, rep_count, weight, duration)
                 return redirect("/my_workouts")
             
         
-        if 'selectPlanBtn' in form_data:
-            
+        if 'selectPlanBtn' in form_data:            
             session["lastActivePlan"] = form_data['selectPlanBtn']
 
             return redirect("/my_workouts")
         
 
-        if 'removeExc' in form_data:
-            
+        if 'removeExc' in form_data:            
             excToRemove = form_data['removeExc']
-            db.execute("""
-                    DELETE FROM plan_details
-                    WHERE plan_id=? AND exc_id=?;
-                """, (session["lastActivePlan"], excToRemove))
-            
-            connection.commit()            
-            return redirect("/my_workouts")
+            deleteExc(excToRemove)       
 
+            return redirect("/my_workouts")
 
 
     
     # Querry for list of plans
-    temp = db.execute('SELECT * FROM plans WHERE user_id=?', (session["user_id"],))
-    plans = temp.fetchall()
+    plans = getPlans()
     length = len(plans)
 
-
     # Querry for currently active plans details
-    temp = db.execute("""
-                WITH exc AS (
-                SELECT * FROM excercises
-                )
-                SELECT * FROM plan_details
-                LEFT JOIN exc
-                ON plan_details.exc_id = exc.id
-                WHERE plan_details.plan_id = ?;
-            """, (session["lastActivePlan"],))
-    plan_details = temp.fetchall()
+    plan_details = getPlanDetails()
     exc_count = len(plan_details)
     
-    temp = db.execute("SELECT name FROM plans WHERE id=?", (session["lastActivePlan"],))
-    activePlanName = temp.fetchone()
-    
-    temp = db.execute("SELECT * FROM muscles;")
-    muscles = temp.fetchall()
-
-    temp = db.execute(
-                """
-                WITH primary_muscles AS (
-                SELECT exc_primary_rel.exc_id AS exc_id, muscles.name AS primary_muscle FROM exc_primary_rel
-                LEFT JOIN muscles
-                ON exc_primary_rel.muscle_id = muscles.id
-                ),
-                secondary_muscles AS (
-                SELECT exc_secondary_rel.exc_id AS exc_id, muscles.name AS secondary_muscle FROM exc_secondary_rel
-                LEFT JOIN muscles
-                ON exc_secondary_rel.muscle_id = muscles.id
-                )
-                SELECT * FROM excercises
-                LEFT JOIN primary_muscles
-                ON excercises.id = primary_muscles.exc_id
-                LEFT JOIN secondary_muscles
-                ON excercises.id = secondary_muscles.exc_id
-                ORDER BY excercises.name;
-                """)
-    exercises = temp.fetchall()
-
+    activePlanName = getActivePlanName()
 
     return render_template("my_workouts.html", plans=plans, length=length, exc_count=exc_count, 
-                           plan_details=plan_details, activePlanName=activePlanName['name'], 
-                           muscles=muscles, exercises=exercises)
+                           plan_details=plan_details, activePlanName=activePlanName, 
+                           muscles=getMuscles(), exercises=getExercises())
 
+
+@app.route("/active_workout", methods=["GET", "POST"])
+def active_workout():
+
+    activePlanName = getActivePlanName()
+
+    plan_details = getPlanDetails()
+    exc_count = len(plan_details)
+
+    return render_template("active_workout.html", activePlanName=activePlanName, exc_count=exc_count)
 
 @app.route("/excercises", methods=["GET", "POST"])
 def excercises():
 
-    temp = db.execute(
-                """
-                WITH primary_muscles AS (
-                SELECT exc_primary_rel.exc_id AS exc_id, muscles.name AS primary_muscle FROM exc_primary_rel
-                LEFT JOIN muscles
-                ON exc_primary_rel.muscle_id = muscles.id
-                ),
-                secondary_muscles AS (
-                SELECT exc_secondary_rel.exc_id AS exc_id, muscles.name AS secondary_muscle FROM exc_secondary_rel
-                LEFT JOIN muscles
-                ON exc_secondary_rel.muscle_id = muscles.id
-                )
-                SELECT * FROM excercises
-                LEFT JOIN primary_muscles
-                ON excercises.id = primary_muscles.exc_id
-                LEFT JOIN secondary_muscles
-                ON excercises.id = secondary_muscles.exc_id
-                ORDER BY excercises.name;
-                """)
-    excercises = temp.fetchall()
+    exercises = getExercises()
     length = len(excercises)
 
     temp = db.execute("SELECT * FROM muscles;")
     muscles = temp.fetchall()
 
-    return render_template("excercises.html", length=length, excercises=excercises, muscles=muscles)
+    return render_template("excercises.html", length=length, excercises=exercises, muscles=muscles)
