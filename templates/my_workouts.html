@@ -83,7 +83,7 @@
                     <form action="/my_workouts" method="post">
                         {% for row in plan_details %}
                             
-                            <div class="row mb-3">   <!-- This should be a clickable section? -->
+                            <div class="row mb-3">
 
                                 <div class="col-1 align-self-center">
                                     <p class="lead">{{ loop.index }}</p>
@@ -129,9 +129,11 @@
             </div>
             
             <div class="row justify-content-start py-5 px-5">
-                <div class="col-2 px-5">
-                    <button type="button" class="btn btn-dark btn-lg">Start Workout</button>
-                </div>
+                <form action="/my_workouts" method="post">
+                    <div class="col-2 px-5">
+                        <button type="submit" class="btn btn-dark btn-lg" name="submitBtn" value="startWO">Start Workout</button>
+                    </div>
+                </form>
             </div>
 
         </div>

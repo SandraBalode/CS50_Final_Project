@@ -184,6 +184,11 @@ def my_workouts():
                 return redirect("/my_workouts")
             
 
+            if button_value == 'startWO':
+
+                return render_template('active_workout.html', plan=session['lastActivePlan'])
+            
+
             if button_value == 'addExc':
 
                 selectedExcId = request.form.get('excOptions')
