@@ -128,7 +128,7 @@ def register():
 def my_workouts():
 
     # if this is the first time in this session then set last created as default value
-    if not session["lastActivePlan"]:        
+    if "lastActivePlan" not in session:        
         lastCreatedPlan = getLastCreatedPlan()
         session['lastActivePlan'] = lastCreatedPlan['id']
 
@@ -218,12 +218,45 @@ def my_workouts():
 @app.route("/active_workout", methods=["GET", "POST"])
 def active_workout():
 
-    activePlanName = getActivePlanName()
+    if request.method == "POST":
+        form_data = request.form
+
+        if 'removeExc' in form_data:            
+            excToRemove = form_data['removeExc']
+            deleteExc(excToRemove)       
+
+            return redirect("/active_workout")
+        
+        if 'submitBtn' in form_data:
+            button_value = form_data['submitBtn']
+
+            if button_value =='addExc':
+                selectedExcId = request.form.get('excOptions')
+                set_count = request.form.get('setCount')
+
+                rep_count = request.form.get('repCount')
+                if rep_count is None:
+                    rep_count = None
+
+                weight = request.form.get('weight')
+                if weight is None:
+                    weight = None
+
+                duration = request.form.get('duration')
+                if duration is None:
+                    duration = None
+
+                addExercise(selectedExcId, set_count, rep_count, weight, duration)
+
+                return redirect("/active_workout")
 
     plan_details = getPlanDetails()
     exc_count = len(plan_details)
 
-    return render_template("active_workout.html", activePlanName=activePlanName, exc_count=exc_count)
+    return render_template("active_workout.html", activePlanName=getActivePlanName(), exc_count=exc_count, 
+                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles())
+
+
 
 @app.route("/excercises", methods=["GET", "POST"])
 def excercises():

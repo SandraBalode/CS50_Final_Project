@@ -7,83 +7,84 @@
 
 {% block main %} 
 
-<div class="col-md-10">
+<div class="row justify-content-center">
+    <div class="col-sm col-md-10 col-lg-8">
 
-    <div class="row justify-content-start">
-        <div class="col-auto">
-            <h1 class="display-6">{{ activePlanName }}</h1>
-        </div>
-    </div>
-
-    <div class="row justify-content-start py-3">
-        <div class="col-auto">
-            <p class="lead">{{ exc_count }} Excercises</p>
-        </div>
-
-        <div class="col-auto">
-            <button type="button" class="btn btn-light" aria-current="true" data-bs-toggle="modal" data-bs-target="#addExc">Add excercise</button>
-        </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-10">
-            
-            <form action="/my_workouts" method="post">
-                {% for row in plan_details %}
-                    
-                    <div class="row mb-3">
-
-                        <div class="col-1 align-self-center">
-                            <p class="lead">{{ loop.index }}</p>
-                        </div>
-
-                        <div class="col-2">
-                            <img src="/static/img/{{row['exc_id']}}.png" alt="{{ row['exc_id'] }}" width="64" height="64">
-                        </div>
-
-                        <div class="col-5">
-                            <p class="lead mb-0">{{ row['name'] }}</p>
-                            <small class="text-muted">
-                                
-                                {{ row['set_count'] }} sets
-                                
-                                {% if row['rep_count'] %}
-                                    &middot; {{ row['rep_count'] }} reps
-                                {% endif %}
-
-                                {% if row['weight'] %}
-                                    &middot; {{ row['weight'] }} kg
-                                {% endif %}
-                                
-                                {% if row['duration'] %}
-                                    &middot; {{ row['duration'] }} sec
-                                {% endif %}
-
-                            </small>
-                        </div>
-
-                        <div class="col-2 align-self-center">
-                            <button class="btn btn-outline-secondary border-0" type="submit" name="removeExc" value="{{row['exc_id']}}">
-                                <small>Remove</small>
-                            </button>
-                        </div>
-
-                    </div>
-                    
-                {% endfor %}
-            </form>
-
-        </div>
-    </div>
-    
-    <div class="row justify-content-start py-5 px-5">
-        <form action="/my_workouts" method="post">
-            <div class="col-2 px-5">
-                <button type="submit" class="btn btn-dark btn-lg" name="submitBtn" value="startWO">Finish Workout</button>
+        <div class="row justify-content-start">
+            <div class="col-auto">
+                <h1 class="display-6">{{ activePlanName }}</h1>
             </div>
-        </form>
-    </div>
+        </div>
 
+        <div class="row justify-content-start py-3">
+            <div class="col-auto">
+                <p class="lead">{{ exc_count }} Excercises</p>
+            </div>
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-light" aria-current="true" data-bs-toggle="modal" data-bs-target="#addExc">Add excercise</button>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col">
+                
+                <form action="/active_workout" method="post">
+                    {% for row in plan_details %}
+                        
+                        <div class="row mb-3">
+
+                            <div class="col-1 align-self-center">
+                                <p class="lead">{{ loop.index }}</p>
+                            </div>
+
+                            <div class="col-2">
+                                <img src="/static/img/{{row['exc_id']}}.png" alt="{{ row['exc_id'] }}" width="64" height="64">
+                            </div>
+
+                            <div class="col-5">
+                                <p class="lead mb-0">{{ row['name'] }}</p>
+                                <small class="text-muted">
+                                    
+                                    {{ row['set_count'] }} sets
+                                    
+                                    {% if row['rep_count'] %}
+                                        &middot; {{ row['rep_count'] }} reps
+                                    {% endif %}
+
+                                    {% if row['weight'] %}
+                                        &middot; {{ row['weight'] }} kg
+                                    {% endif %}
+                                    
+                                    {% if row['duration'] %}
+                                        &middot; {{ row['duration'] }} sec
+                                    {% endif %}
+
+                                </small>
+                            </div>
+
+                            <div class="col-2 align-self-center">
+                                <button class="btn btn-outline-secondary border-0" type="submit" name="removeExc" value="{{row['exc_id']}}">
+                                    <small>Remove</small>
+                                </button>
+                            </div>
+
+                        </div>
+                        
+                    {% endfor %}
+                </form>
+
+            </div>
+        </div>
+        
+        <div class="row justify-content-start py-5 px-5">
+            <form action="/active_workout" method="post">
+                <div class="col-2 px-5">
+                    <button type="submit" class="btn btn-dark btn-lg" name="submitBtn" value="startWO">Finish Workout</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- add excercise Modal -->
@@ -101,7 +102,7 @@
                 <button type="button" class="btn btn-outline-dark by_muscle_btn">By Muscle</button>                    
             </div>
 
-            <form action="/my_workouts" method="post">
+            <form action="/active_workout" method="post">
 
                 <div class="list-group py-4" id="all_exc_table">
                     
