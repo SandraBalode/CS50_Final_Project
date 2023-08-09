@@ -16,3 +16,11 @@ html, body {
     background-color: #f5f8fa;
     color: #000000;
 }
+
+.checkBtn {
+  color: black;
+}
+
+.checkBtn:hover {
+  background-color: green !important;
+}

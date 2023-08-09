@@ -60,9 +60,6 @@ def login():
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", [request.form.get("username")]).fetchall()
 
-        print(request.form.get("username"))
-        print(rows)
-
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["password"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
@@ -247,8 +244,22 @@ def active_workout():
                     duration = None
 
                 addExercise(selectedExcId, set_count, rep_count, weight, duration)
+                return redirect("/active_workout")
+            
+
+            if button_value =='finishExc':
+                # exc_id = 
+                selected_checks = request.form.getlist('checkBtn')
+                
+                # for set in selected_checks:
+
 
                 return redirect("/active_workout")
+
+            if button_value =='finishWO':
+                # log the workout info to the history
+                # redirect to this workouts generated summary.
+                return redirect("/")
 
     plan_details = getPlanDetails()
     exc_count = len(plan_details)
@@ -262,7 +273,7 @@ def active_workout():
 def excercises():
 
     exercises = getExercises()
-    length = len(excercises)
+    length = len(getExercises())
 
     temp = db.execute("SELECT * FROM muscles;")
     muscles = temp.fetchall()

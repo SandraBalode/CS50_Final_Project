@@ -104,6 +104,13 @@ def addExercise(selectedExcId, set_count, rep_count, weight, duration):
     connection.commit()
     return "Exercise added."
 
+def addSet():
+    db.execute(""""
+        INSERT INTO plan_execution (plan_id, date, plan_start_time, exc_order, exc_id, set_number,
+                                    rep_count, weight, duration, user_id)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """)
+
 
 # Query Delete methods
 

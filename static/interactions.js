@@ -176,3 +176,21 @@ closeBtn.addEventListener('click', function() {
     document.querySelector('#excDetails').style.display = 'none';
     document.querySelector('#excDetailsBtn').style.display = 'none';
 })
+
+
+
+// Interaction for checkmark buttons during a w/o plan execution
+
+const checkBtns = document.querySelectorAll('.checkBtn')
+
+checkBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        if (btn.style.backgroundColor !== 'green') {
+            btn.style.backgroundColor = 'green';
+            // btn.setAttribute('name', 'checkedBtn');
+        } else {
+            btn.style.backgroundColor = 'white';
+            // btn.setAttribute('name', 'uncheckedBtn');
+        }
+    })
+})
