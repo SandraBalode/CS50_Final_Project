@@ -14,3 +14,7 @@ FitBudi
 8. Choose a gym (set pof available equipment) that filters the excercises. 
 9. User registration and Profiles
 10. Workout program (how to improve over the weeks/ upscale the workout intensity and how hard the excercises should be)
+
+
+1. Set realistic goals of how this should look. 
+2. Write a normal README file. 
