@@ -38,6 +38,7 @@
                                 
                                 <div class="col-1 align-self-center">
                                     <p class="lead">{{ loop.index }}</p>
+                                    <input type="hidden" id="exc_order" name="exc_order" value="{{ loop.index }}">
                                 </div>
 
                                 <div class="col-2">
@@ -107,7 +108,7 @@
                                             {% endif %}
 
                                             <div class="col-auto d-flex align-items-center">
-                                                <input type="checkbox" class="btn-check" id="checkBtn_{{ row['id'] }}_{{ n }}" name="checkBtn" value="checkBtn_{{ row['id'] }}_{{ n }}">
+                                                <input type="checkbox" class="btn-check" id="checkBtn_{{ row['id'] }}_{{ n }}" name="checkBtn" value="{{ row['id'] }}_{{ n }}">
                                                 <label class="btn btn-sm btn-outline-secondary rounded-5 checkBtn" for="checkBtn_{{ row['id'] }}_{{ n }}">&check;</button>
                                             </div>
                                         </div>
@@ -124,8 +125,8 @@
 
                                 <div class="row justify-content-end">                                    
                                     <div class="col-auto">
-                                        <button type="submit" class="btn btn-outline-dark mb-2" name="submitBtn" value="finishExc">
-                                            Finish excercise.
+                                        <button type="submit" class="btn btn-outline-dark mb-2 finishExcBtn" name="submitBtn" value="finishExc">
+                                            Finish exercise.
                                         </button>
                                     </div>       
                                     <div class="col-auto">

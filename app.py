@@ -10,6 +10,7 @@ from sqlite3 import Error
 from helpers import apology, login_required, usd, dict_factory
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
 from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
+from queries import getPlanDetailsRow, addExcToPlanExecution
 
 # Configure application
 app = Flask(__name__)
@@ -248,13 +249,37 @@ def active_workout():
             
 
             if button_value =='finishExc':
-                # exc_id = 
-                selected_checks = request.form.getlist('checkBtn')
                 
-                # for set in selected_checks:
+                # get date (yyyy-mm-dd) and time (hh:mm:ss)
+                plan_start_date = date.today()
+                plan_start_time = datetime.now().strftime("%H:%M:%S")
+
+                selected_checks = request.form.getlist('checkBtn')
+
+                # loop through checked sets, add each to plan_execution table
+                for set in selected_checks:
+                    temp = set.partition('_')
+                    plan_details_id = int(temp[0])
+                    print(plan_details_id)
+                    set_number = temp[2]
+
+                    row = getPlanDetailsRow(plan_details_id)
+                    plan_id = row[0]['plan_id']
+                    exc_order = request.form.get('exc_order')
+                    exc_id = row[0]['exc_id']
+                    
+                    set_rep_count = request.form.get('rep_count_' + set_number)
+                    set_weight = request.form.get('weight_' + set_number)
+                    set_duration = request.form.get('duration_' + set_number)
 
 
+                    addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+                                    set_rep_count, set_weight, set_duration)
+                    print('added')
+
+                # should refocus to the next exc after reload
                 return redirect("/active_workout")
+
 
             if button_value =='finishWO':
                 # log the workout info to the history

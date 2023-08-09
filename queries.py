@@ -31,11 +31,11 @@ def getLastCreatedPlan():
 def getPlanDetails():
     temp = db.execute("""
                 WITH exc AS (
-                SELECT * FROM excercises
+                SELECT id AS exercise_id, name, muscle_group, instructions, equipement_id FROM excercises
                 )
                 SELECT * FROM plan_details
                 LEFT JOIN exc
-                ON plan_details.exc_id = exc.id
+                ON plan_details.exc_id = exc.exercise_id
                 WHERE plan_details.plan_id = ?;
             """, (session["lastActivePlan"],))
     return temp.fetchall()
@@ -82,6 +82,12 @@ def getPlans():
     
     return temp.fetchall()
 
+def getPlanDetailsRow(id):
+    temp = db.execute("""
+        SELECT * FROM plan_details WHERE id=?
+    """, (id,))
+    
+    return temp.fetchall()
 
 
 # Query set methods
@@ -104,12 +110,17 @@ def addExercise(selectedExcId, set_count, rep_count, weight, duration):
     connection.commit()
     return "Exercise added."
 
-def addSet():
-    db.execute(""""
+def addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+                                    rep_count, weight, duration):
+    db.execute("""
         INSERT INTO plan_execution (plan_id, date, plan_start_time, exc_order, exc_id, set_number,
                                     rep_count, weight, duration, user_id)
         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """)
+    """, (plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+                                    rep_count, weight, duration, session.get("user_id")))
+    
+    connection.commit()
+    return "Set added"
 
 
 # Query Delete methods
