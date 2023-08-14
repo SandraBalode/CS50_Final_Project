@@ -7,7 +7,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, date
 import sqlite3
 from sqlite3 import Error
-from helpers import apology, login_required, usd, dict_factory
+from helpers import apology, login_required, usd, dict_factory, createCounter
+from helpers import incrementCounter, decrementCounter
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
 from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
 from queries import getPlanDetailsRow, addExcToPlanExecution
@@ -216,6 +217,10 @@ def my_workouts():
 @app.route("/active_workout", methods=["GET", "POST"])
 def active_workout():
 
+    plan_details = getPlanDetails()
+    exc_count = len(plan_details)
+    
+
     if request.method == "POST":
         form_data = request.form
 
@@ -272,10 +277,8 @@ def active_workout():
                     set_weight = request.form.get('weight_' + set_number)
                     set_duration = request.form.get('duration_' + set_number)
 
-
                     addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
                                     set_rep_count, set_weight, set_duration)
-                    print('added')
 
                 # should refocus to the next exc after reload
                 return redirect("/active_workout")
@@ -284,13 +287,31 @@ def active_workout():
             if button_value =='finishWO':
                 # log the workout info to the history
                 # redirect to this workouts generated summary.
+
+                # forget active exc and counterlists
+                session.pop('active_exc')
+                session.pop('currentNumber')
+                session.pop('counterList')
+
                 return redirect("/")
+            
+            if button_value =='prevExc':
+                decrementCounter()                
+                session['active_exc'] = plan_details[session['currentNumber']]
 
-    plan_details = getPlanDetails()
-    exc_count = len(plan_details)
 
+            if button_value =='nextExc':
+                incrementCounter()
+                session['active_exc'] = plan_details[session['currentNumber']]
+
+    
+
+    if 'active_exc' not in session :
+        createCounter(exc_count)
+        session['active_exc'] = plan_details[session['currentNumber']]
+    
     return render_template("active_workout.html", activePlanName=getActivePlanName(), exc_count=exc_count, 
-                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles())
+                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles(), active_exc=session['active_exc'])
 
 
 

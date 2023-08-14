@@ -27,133 +27,145 @@
         </div>
 
         <div class="row justify-content-center">
-            <div class="col">
+            <div class="row">
                 
-                <form action="/active_workout" class="accordion container" method="post">
-                    {% for row in plan_details %}
-                        
-                        <div class="row mb-3 accordion-item">
+                <div class="col-1">
+                    <!-- numbered disabled buttons for exercise order with one active one; change color oncen finished -->
+                    {% for i in plan_details %}
+                        <div class="row py-1">
+                            <label class="col-auto btn btn-sm btn-outline-secondary rounded-5 disabled">{{ loop.index }}</label>
+                        </div>
+                    {% endfor %}
 
-                            <button class="accordion-button collapsed h-100 lead" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ row['id'] }}" aria-expanded="true" aria-controls="collapse{{ row['id'] }}">
+                </div>
+
+                <form action="/active_workout" class="col-10 border border-dark rounded-1" method="post">
+                    <div class="row border-bottom border-dark">
+
+                        <div class="col-2">
+                            <img src="/static/img/{{ active_exc['exc_id'] }}.png" alt="{{ active_exc['name'] }}" width="64" height="64">
+                        </div>
+
+                        <div class="col-5">
+                            <p class="lead mb-0">{{ active_exc['name'] }}</p>
+                            <small class="text-muted">
                                 
-                                <div class="col-1 align-self-center">
-                                    <p class="lead">{{ loop.index }}</p>
-                                    <input type="hidden" id="exc_order" name="exc_order" value="{{ loop.index }}">
-                                </div>
+                                {{ active_exc['set_count'] }} sets
+                                
+                                {% if active_exc['rep_count'] %}
+                                    &middot; {{ active_exc['rep_count'] }} reps
+                                {% endif %}
 
-                                <div class="col-2">
-                                    <img src="/static/img/{{row['exc_id']}}.png" alt="{{ row['exc_id'] }}" width="64" height="64">
-                                </div>
+                                {% if active_exc['weight'] %}
+                                    &middot; {{ active_exc['weight'] }} kg
+                                {% endif %}
+                                
+                                {% if active_exc['duration'] %}
+                                    &middot; {{ active_exc['duration'] }} sec
+                                {% endif %}
 
-                                <div class="col-5">
-                                    <p class="lead mb-0">{{ row['name'] }}</p>
-                                    <small class="text-muted">
-                                        
-                                        {{ row['set_count'] }} sets
-                                        
-                                        {% if row['rep_count'] %}
-                                            &middot; {{ row['rep_count'] }} reps
-                                        {% endif %}
+                            </small>
+                        </div>
 
-                                        {% if row['weight'] %}
-                                            &middot; {{ row['weight'] }} kg
-                                        {% endif %}
-                                        
-                                        {% if row['duration'] %}
-                                            &middot; {{ row['duration'] }} sec
-                                        {% endif %}
+                        <div class="col">
+                            <div class="row justify-content-end">
+                                <button class="col-auto btn btn-outline-dark border-0" aria-current="true" data-bs-toggle="modal" data-bs-target="#info">info</button>
+                            </div>
+                        </div>
 
-                                    </small>
-                                </div>
+                    </div>
 
-                            </button>
+                    <div class="row">
+                        <div class="py-2">
 
-
-                            <div id="collapse{{ row['id'] }}" class="accordion-collapse collapse" aria-labelledby="heading{{ row['id'] }}">
-
-                                <div class="accordion-body">
-                                    
-                                    {% for n in range(1, row['set_count'] + 1) %}
-                                        <div class="row justify-content-start py-1">
-                                            <div class="col-2 lead">
-                                                {{ n }}
-                                            </div>                                       
-                                                                                                                        
-                                            {% if row['rep_count'] %}
-                                                <div class="col-2">
-                                                    <input type="number" class="form-control" id="rep_count_{{ n }}" name="rep_count_{{ n }}" value="{{ row['rep_count'] }}" min="0" step="1">
-                                                </div>
-                                                <div class="col-auto">                                                    
-                                                    <label for="rep_count_{{ n }}" class="col-form-label">reps</label>
-                                                </div>
-                                            {% endif %}
-
-                                            {% if row['weight'] %}
-                                                <div class="col-1"><small class="text-muted">/</small></div>
-                                                <div class="col-2">                                                    
-                                                    <input type="number" class="form-control" id="weight_{{ n }}" name="weight_{{ n }}" value="{{ row['weight'] }}">
-                                                </div>
-                                                <div class="col-auto">
-                                                    <label for="weight_{{ n }}" class="col-form-label">kg</label> 
-                                                </div>                                           
-                                            {% endif %}
-                                            
-                                            {% if row['duration'] %}
-                                                <div class="col-2">
-                                                    <input type="number" class="form-control" id="duration_{{ n }}" name="duration_{{ n }}" value="{{ row['duration'] }}">
-                                                </div>
-                                                <div class="col-auto">
-                                                    <label for="duration_{{ n }}" class="col-form-label">sec</label>
-                                                </div>
-                                            {% endif %}
-
-                                            <div class="col-auto d-flex align-items-center">
-                                                <input type="checkbox" class="btn-check" id="checkBtn_{{ row['id'] }}_{{ n }}" name="checkBtn" value="{{ row['id'] }}_{{ n }}">
-                                                <label class="btn btn-sm btn-outline-secondary rounded-5 checkBtn" for="checkBtn_{{ row['id'] }}_{{ n }}">&check;</button>
-                                            </div>
+                            {% for n in range(1, active_exc['set_count'] + 1) %}
+                                <div class="row justify-content-start py-1">
+                                    <div class="col-2 lead">
+                                        {{ n }}
+                                    </div>                                       
+                                                                                                                
+                                    {% if active_exc['rep_count'] %}
+                                        <div class="col-2">
+                                            <input type="number" class="form-control" id="rep_count_{{ n }}" name="rep_count_{{ n }}" value="{{ active_exc['rep_count'] }}" min="0" step="1">
                                         </div>
+                                        <div class="col-auto">                                                    
+                                            <label for="rep_count_{{ n }}" class="col-form-label">reps</label>
+                                        </div>
+                                    {% endif %}
 
-                                    {% endfor %}
-
-                                    <div class="row justify-content-start pt-3 pb-5">
-                                        <button class="col-auto btn btn-sm btn-outline-dark mx-3 submitBtn" type="submit" name="submitBtn" value="addRep_{{ row['id'] }}">
-                                            Add a set
-                                        </button>
-                                    </div>
+                                    {% if active_exc['weight'] %}
+                                        <div class="col-1"><small class="text-muted">/</small></div>
+                                        <div class="col-2">                                                    
+                                            <input type="number" class="form-control" id="weight_{{ n }}" name="weight_{{ n }}" value="{{ active_exc['weight'] }}">
+                                        </div>
+                                        <div class="col-auto">
+                                            <label for="weight_{{ n }}" class="col-form-label">kg</label> 
+                                        </div>                                           
+                                    {% endif %}
                                     
+                                    {% if active_exc['duration'] %}
+                                        <div class="col-2">
+                                            <input type="number" class="form-control" id="duration_{{ n }}" name="duration_{{ n }}" value="{{ active_exc['duration'] }}">
+                                        </div>
+                                        <div class="col-auto">
+                                            <label for="duration_{{ n }}" class="col-form-label">sec</label>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="col-auto d-flex align-items-center">
+                                        <input type="checkbox" class="btn-check" id="checkBtn_{{ active_exc['id'] }}_{{ n }}" name="checkBtn" value="{{ active_exc['id'] }}_{{ n }}">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-5 checkBtn" for="checkBtn_{{ active_exc['id'] }}_{{ n }}">&check;</label>
+                                    </div>
                                 </div>
 
-                                <div class="row justify-content-end">                                    
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-outline-dark mb-2 finishExcBtn" name="submitBtn" value="finishExc">
-                                            Finish exercise.
-                                        </button>
-                                    </div>       
-                                    <div class="col-auto">
-                                        <button class="btn btn-outline-secondary border-0" type="submit" name="removeExc" value="{{row['exc_id']}}">
-                                            <small>Remove exercise</small>
-                                        </button>
-                                    </div>                             
+                            {% endfor %}
+                             
+                            <div class="row justify-content-start pt-3 pb-5">
+                                <div class="col-2">
+                                    <button class="col-auto btn btn-sm btn-outline-dark mx-3 submitBtn" type="submit" name="submitBtn" value="addRep_{{ active_exc['id'] }}">
+                                        Add a set
+                                    </button>
                                 </div>
                             </div>
 
-                            
-
                         </div>
-                        
-                    {% endfor %}
-                </form>
 
+                        <div class="row justify-content-center align-items-center pt-5">
+                            <!-- Finish w/o button -->                            
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-dark btn-lg" name="submitBtn" value="finishWO">Finish Workout</button>
+                            </div>                            
+                        </div>
+
+                        <div class="row justify-content-center align-items-center">
+                            <!-- remove exc btn  -->
+                            <div class="col-auto">
+                                <button class="btn btn-outline-secondary border-0" type="submit" name="removeExc" value="{{ active_exc['exc_id'] }}">
+                                    <small>Remove exercise</small>
+                                </button>
+                            </div> 
+                        </div>
+
+                        <div class="row align-items-center justify-content-between my-3">
+                            <!-- prev btn -->
+                            <button class="col-auto btn btn-sm btn-outline-dark mx-3 rounded-circle submitBtn" type="submit" name="submitBtn" value="prevExc">
+                                &larr;
+                            </button>
+
+                            <!-- next exc btn  -->
+                            <button class="col-auto btn btn-sm btn-outline-dark mx-3 rounded-circle submitBtn" type="submit" name="submitBtn" value="nextExc">
+                                &rarr;
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+                
             </div>
         </div>
         
-        <div class="row justify-content-start py-5 px-5">
-            <form action="/active_workout" method="post">
-                <div class="col-2 px-5">
-                    <button type="submit" class="btn btn-dark btn-lg" name="submitBtn" value="finishWO">Finish Workout</button>
-                </div>
-            </form>
-        </div>
+        
+
     </div>
 </div>
 
@@ -263,6 +275,26 @@
                 </div>
                 
             </form>
+            
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+<!-- info modal -->
+<div class="modal fade" id="info" tabindex="-1" aria-labelledby="infoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="infoLabel">Info</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            
+            
+
+            
             
         </div>
         

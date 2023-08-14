@@ -50,3 +50,22 @@ def usd(value):
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
     return {key: value for key, value in zip(fields, row)}
+
+def createCounter(length):
+    session['counterList'] = []
+    for i in range(length):
+        session['counterList'].append(i)
+
+    session['currentNumber'] = session['counterList'][0]
+
+def incrementCounter():
+    if session['currentNumber'] == session['counterList'][-1]:
+        session['currentNumber'] = session['counterList'][0]
+    else:
+        session['currentNumber'] += 1
+
+def decrementCounter():
+    if session['currentNumber'] == session['counterList'][0]:
+        session['currentNumber'] = session['counterList'][-1]
+    else:
+        session['currentNumber'] -= 1
