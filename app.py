@@ -11,7 +11,7 @@ from helpers import apology, login_required, usd, dict_factory, createCounter
 from helpers import incrementCounter, decrementCounter
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
 from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
-from queries import getPlanDetailsRow, addExcToPlanExecution
+from queries import getPlanDetailsRow, addExcToPlanExecution, incrementSet
 
 # Configure application
 app = Flask(__name__)
@@ -320,15 +320,19 @@ def active_workout():
                     incrementCounter(exc_count)
                 
                 session['active_exc'] = plan_details[session['currentNumber']]
+                
 
-    
+            if button_value == 'addSetBtn':
+                activeExcid = session['active_exc']['exc_id']
+                incrementSet(activeExcid)
+
 
     if 'active_exc' not in session :
         createCounter(exc_count)
         session['active_exc'] = plan_details[session['currentNumber']]
     
     return render_template("active_workout.html", activePlanName=getActivePlanName(), exc_count=exc_count, 
-                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles(), 
+                           plan_details=getPlanDetails(), exercises=getExercises(), muscles=getMuscles(), 
                            active_exc=session['active_exc'], active=(session['currentNumber']+1), counterList=session['counterList'])
 
 

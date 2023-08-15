@@ -122,6 +122,17 @@ def addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, 
     connection.commit()
     return "Set added"
 
+def incrementSet(excId):
+    db.execute("""
+    UPDATE plan_details
+    SET set_count=set_count+1
+    WHERE plan_id=?
+    AND exc_id=?
+    """,(session["lastActivePlan"], excId))
+    
+    connection.commit()
+    return "Set count incremented"
+
 
 # Query Delete methods
 
