@@ -280,7 +280,18 @@ def active_workout():
                     addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
                                     set_rep_count, set_weight, set_duration)
 
-                # should refocus to the next exc after reload
+                # disable the current exc from the counter list
+                session['counterList'][session['currentNumber']] = False
+                isActiveExc = ''
+
+                # change current exc to the next one
+                incrementCounter(exc_count)
+                while session['counterList'][session['currentNumber']] == False:
+                    incrementCounter(exc_count)
+                
+                session['active_exc'] = plan_details[session['currentNumber']]
+                
+
                 return redirect("/active_workout")
 
 
@@ -296,12 +307,18 @@ def active_workout():
                 return redirect("/")
             
             if button_value =='prevExc':
-                decrementCounter()                
+                decrementCounter(exc_count)
+                while session['counterList'][session['currentNumber']] == False:
+                    decrementCounter(exc_count)
+                
                 session['active_exc'] = plan_details[session['currentNumber']]
 
 
             if button_value =='nextExc':
-                incrementCounter()
+                incrementCounter(exc_count)
+                while session['counterList'][session['currentNumber']] == False:
+                    incrementCounter(exc_count)
+                
                 session['active_exc'] = plan_details[session['currentNumber']]
 
     
@@ -311,7 +328,8 @@ def active_workout():
         session['active_exc'] = plan_details[session['currentNumber']]
     
     return render_template("active_workout.html", activePlanName=getActivePlanName(), exc_count=exc_count, 
-                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles(), active_exc=session['active_exc'])
+                           plan_details=plan_details, exercises=getExercises(), muscles=getMuscles(), 
+                           active_exc=session['active_exc'], active=(session['currentNumber']+1), counterList=session['counterList'])
 
 
 

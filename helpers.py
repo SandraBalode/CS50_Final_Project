@@ -54,18 +54,18 @@ def dict_factory(cursor, row):
 def createCounter(length):
     session['counterList'] = []
     for i in range(length):
-        session['counterList'].append(i)
+        session['counterList'].append(True)
 
-    session['currentNumber'] = session['counterList'][0]
+    session['currentNumber'] = 0
 
-def incrementCounter():
-    if session['currentNumber'] == session['counterList'][-1]:
-        session['currentNumber'] = session['counterList'][0]
+def incrementCounter(length):
+    if session['currentNumber'] == (length - 1):
+        session['currentNumber'] = 0
     else:
         session['currentNumber'] += 1
 
-def decrementCounter():
-    if session['currentNumber'] == session['counterList'][0]:
-        session['currentNumber'] = session['counterList'][-1]
+def decrementCounter(length):
+    if session['currentNumber'] == 0:
+        session['currentNumber'] = (length - 1)
     else:
         session['currentNumber'] -= 1
