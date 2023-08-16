@@ -103,6 +103,67 @@ def getPlanDetailsRow(id):
     
     return temp.fetchall()
 
+def getExecutedExc(excId, today):
+    temp = db.execute("""
+        SELECT * FROM plan_execution
+        WHERE exc_id=?
+        AND date=?
+        AND user_id=?
+                      
+    """, (excId, today, session['user_id']))
+
+    return temp.fetchall()
+
+def getExcCompletionRate(today):
+    
+    plan_details = getPlanDetails()
+
+    for exc in plan_details:
+        # Get info from about planed w/o
+        planned_set_count = exc['set_count']
+        full_set_weight = 1 / planned_set_count
+        planned_rep_count = exc['rep_count']
+        full_rep_weight = full_set_weight / planned_rep_count
+        planned_weight = exc['weight']
+        planned_duration = exc['duration']
+
+
+        # Get info from plan_execution
+        executed_exercises = getExecutedExc(exc['exc_id'], today)
+        rate = 0
+
+        for st in executed_exercises:
+            if planned_duration:
+                # calc with duration
+                duration_weight = (st['duration'] / planned_duration) * full_set_weight
+                rate += duration_weight
+
+                # skip the rest for this loop
+                continue
+
+            if planned_rep_count:
+                if planned_weight:
+                    # calc with weight
+                    weight_perc = st['weight'] / planned_weight
+                    one_rep_weight = weight_perc * full_rep_weight
+                    reps_weight = st['rep_count'] * one_rep_weight
+                    rate += reps_weight
+
+                    # skip the rest for this loop
+                    continue
+
+                # calc without weight
+                reps_weight = st['rep_count'] * full_rep_weight
+                rate += reps_weight
+
+        return rate
+            
+
+
+    
+    
+    return
+
 
 # Query set methods
 

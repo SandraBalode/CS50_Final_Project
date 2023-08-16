@@ -11,7 +11,7 @@ from helpers import apology, login_required, usd, dict_factory, createCounter
 from helpers import incrementCounter, decrementCounter, woIsDone
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
 from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
-from queries import getPlanDetailsRow, addExcToPlanExecution, incrementSet
+from queries import getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate
 
 # Configure application
 app = Flask(__name__)
@@ -359,4 +359,11 @@ def excercises():
 @app.route("/wo_summary", methods=["GET", "POST"])
 def wo_summary():
 
-    return render_template("wo_summary.html")
+    today = date.today()
+
+    excCompletionRate = getExcCompletionRate(today)
+    totalWeightLifted = 'TBA'
+    performanceImprovement = 'TBA'
+    personalRecords = 'TBA'
+
+    return render_template("wo_summary.html", totalWeightLifted=totalWeightLifted, excCompletionRate=round(excCompletionRate*100))

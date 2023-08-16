@@ -7,8 +7,44 @@
 
 {% block main %} 
 
-                
-<h2>Woo! You smashed that workout!</h2>                                                                                                 
+<div class="border border-dark rounded-1">
+    <div class="row justify-content-center border-bottom border-dark">
+        <div class="col-sm col-md-10 col-lg-8">
+            <h1 class="display-6">Woo! You smashed that workout!</h1>
+        </div>
+    </div>                                                                                                
+
+    <div class="row justify-content-center border-bottom border-dark">
+        <div class="col-sm col-md-10 col-lg-8">
+            <h1 class="display-3">Todays stats:</h1>
+
+            <h1 class="display-2">Weight lifted: {{ totalWeightLifted }}</h1>
+            <h1 class="display-2">Exercise completion Rate: {{ excCompletionRate }}%</h1>
+            <h1 class="display-2">Performance imporoved: </h1>
+            <ul>
+                <li>exc1 by % compared to last time</li>
+                <li>exc2 by %</li>
+            </ul>
+
+            <h1 class="display-2">New PR!: </h1>
+            <ul>
+                <li>
+                    exc1 -> sets * reps * weight * time
+                    <small>prev pr-> sets * reps * weight * time</small>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-sm col-md-10 col-lg-8">
+            <h1 class="display-5">Keep going, you [endearement]!</h1>
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}
