@@ -307,9 +307,6 @@ def active_workout():
             
             if button_value =='prevExc':
 
-                # remember current checkmarks
-                
-
                 # set new active exercise
                 decrementCounter(exc_count)
                 while session['counterList'][session['currentNumber']] == False:
@@ -319,9 +316,6 @@ def active_workout():
 
 
             if button_value =='nextExc':
-
-                # remember current checkmarks
-                
 
                 # set new active exercise
                 incrementCounter(exc_count)
@@ -334,8 +328,6 @@ def active_workout():
             if button_value == 'addSetBtn':
                 activeExcid = session['active_exc']['exc_id']
                 incrementSet(activeExcid)
-
-                #increment checkmark list
                 
     
 

@@ -32,10 +32,24 @@ def getPlanDetails():
     temp = db.execute("""
                 WITH exc AS (
                 SELECT id AS exercise_id, name, muscle_group, instructions, equipement_id FROM excercises
+                ),
+                primary_muscles AS (
+                SELECT exc_primary_rel.exc_id AS exc_id, muscles.name AS primary_muscle FROM exc_primary_rel
+                LEFT JOIN muscles
+                ON exc_primary_rel.muscle_id = muscles.id
+                ),
+                secondary_muscles AS (
+                SELECT exc_secondary_rel.exc_id AS sec_exc_id, muscles.name AS secondary_muscle FROM exc_secondary_rel
+                LEFT JOIN muscles
+                ON exc_secondary_rel.muscle_id = muscles.id
                 )
                 SELECT * FROM plan_details
                 LEFT JOIN exc
                 ON plan_details.exc_id = exc.exercise_id
+                LEFT JOIN primary_muscles
+                ON exc.exercise_id = primary_muscles.exc_id
+                LEFT JOIN secondary_muscles
+                ON exc.exercise_id = secondary_muscles.sec_exc_id
                 WHERE plan_details.plan_id = ?;
             """, (session["lastActivePlan"],))
     return temp.fetchall()
