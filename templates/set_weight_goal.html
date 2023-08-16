@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    set Weight Goal
+{% endblock %}
+
+
+{% block main %} 
+    <form action="/set_weight_goal" method="post">
+        <div class="mb-3">
+            <label for="height">Height, cm:</label>
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="height" name="height" type="number" min="1">
+        </div>
+        <div class="mb-3">
+            <label for="weight">Weight, kg:</label>
+            <input class="form-control mx-auto w-auto" id="weight" name="weight" type="number" min="1">
+        </div>
+
+        <div class="mb-3">
+            <label for="goalWeight">My desired weight:</label>
+            <input class="form-control mx-auto w-auto" id="goalWeight" name="goalWeight" type="number" min="1">
+        </div>
+
+        <div class="mb-3">
+            <button class="btn btn-dark" name="setWeightGoal" type="submit">Set Goal</button>            
+        </div>
+    </form>
+{% endblock %}

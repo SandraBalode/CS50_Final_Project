@@ -18,6 +18,22 @@ db = connection.cursor()
 
 # Query get methods
 
+def getUserWeight():
+    temp = db.execute("""
+        SELECT weight FROM users
+        WHERE id=?;
+    """, (session['user_id'],))
+    
+    return temp.fetchone()
+
+def getUserHeight():
+    temp = db.execute("""
+        SELECT height FROM users
+        WHERE id=?;
+    """, (session['user_id'],))
+
+    return temp.fetchone()
+
 def getLastCreatedPlan():
     temp = db.execute("""
                             SELECT * FROM plans
@@ -156,16 +172,27 @@ def getExcCompletionRate(today):
                 reps_weight = st['rep_count'] * full_rep_weight
                 rate += reps_weight
 
-        return rate
-            
+    return rate
 
 
-    
-    
-    return
+def totalWeightLifted(date):
+    return            
 
 
 # Query set methods
+
+def setGoals(height, weight, goalWeight):
+
+    db.execute("""
+        UPDATE users 
+        SET height=?,
+        weight=?,
+        weight_goal=?
+        WHERE id=?;
+    """, (height, weight, goalWeight, session['user_id']))
+
+    connection.commit()
+    return "weight goals set"
 
 def setNewPlan(name):
     db.execute("""

@@ -7,11 +7,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, date
 import sqlite3
 from sqlite3 import Error
-from helpers import apology, login_required, usd, dict_factory, createCounter
-from helpers import incrementCounter, decrementCounter, woIsDone
-from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
-from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
-from queries import getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate
+from helpers import apology, login_required, usd, dict_factory, createCounter, \
+    incrementCounter, decrementCounter, woIsDone
+from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans, \
+    getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc, \
+    getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate, \
+    getUserWeight, getUserHeight, setGoals
 
 # Configure application
 app = Flask(__name__)
@@ -33,8 +34,46 @@ db = connection.cursor()
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+    weight = getUserWeight()
+    height = getUserHeight()
 
-   return apology("TO-DO")
+    if not weight or not height:
+        return redirect("/set_weight_goal")
+
+
+    return apology("TO-DO")
+
+@app.route("/set_weight_goal", methods=["GET", "POST"])
+def set_weight_goal():
+    
+    # User reached route via POST
+    if request.method == "POST":
+
+        # Ensure height was submitted
+        if not request.form.get("height"):
+            return redirect("/set_weight_goal")
+        
+        # Ensure weight was submitted
+        if not request.form.get("weight"):
+            return redirect("/set_weight_goal")
+        
+        # Ensure goalWeight was submitted
+        if not request.form.get("goalWeight"):
+            return redirect("/set_weight_goal")
+        
+        height = request.form.get("height")
+        weight = request.form.get("weight")
+        goalWeight = request.form.get("goalWeight")
+        
+        setGoals(height, weight, goalWeight)
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("set_weight_goal.html")
+
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -362,8 +401,14 @@ def wo_summary():
     today = date.today()
 
     excCompletionRate = getExcCompletionRate(today)
-    totalWeightLifted = 'TBA'
+    totalWeightLifted = totalWeightLifted(today)
     performanceImprovement = 'TBA'
     personalRecords = 'TBA'
 
     return render_template("wo_summary.html", totalWeightLifted=totalWeightLifted, excCompletionRate=round(excCompletionRate*100))
+
+
+@app.route("/my_weight", methods=["GET", "POST"])
+def my_weight():
+
+    return render_template("my_weight.html")
