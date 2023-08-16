@@ -12,7 +12,7 @@ from helpers import apology, login_required, usd, dict_factory, createCounter, \
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans, \
     getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc, \
     getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate, \
-    getUserWeight, getUserHeight, setGoals
+    getUserWeight, getUserHeight, setGoals, totalWeightLifted, addWeightMeasurement
 
 # Configure application
 app = Flask(__name__)
@@ -66,6 +66,10 @@ def set_weight_goal():
         goalWeight = request.form.get("goalWeight")
         
         setGoals(height, weight, goalWeight)
+
+        today = date.today()
+        time = datetime.now().strftime("%H:%M:%S")
+        addWeightMeasurement(weight, today, time)
 
         # Redirect user to home page
         return redirect("/")
@@ -401,11 +405,10 @@ def wo_summary():
     today = date.today()
 
     excCompletionRate = getExcCompletionRate(today)
-    totalWeightLifted = totalWeightLifted(today)
     performanceImprovement = 'TBA'
     personalRecords = 'TBA'
 
-    return render_template("wo_summary.html", totalWeightLifted=totalWeightLifted, excCompletionRate=round(excCompletionRate*100))
+    return render_template("wo_summary.html", totalWeightLifted=totalWeightLifted(today), excCompletionRate=round(excCompletionRate*100))
 
 
 @app.route("/my_weight", methods=["GET", "POST"])

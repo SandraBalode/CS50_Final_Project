@@ -24,7 +24,7 @@ def getUserWeight():
         WHERE id=?;
     """, (session['user_id'],))
     
-    return temp.fetchone()
+    return temp.fetchone()['weight']
 
 def getUserHeight():
     temp = db.execute("""
@@ -32,7 +32,7 @@ def getUserHeight():
         WHERE id=?;
     """, (session['user_id'],))
 
-    return temp.fetchone()
+    return temp.fetchone()['height']
 
 def getLastCreatedPlan():
     temp = db.execute("""
@@ -47,7 +47,7 @@ def getLastCreatedPlan():
 def getPlanDetails():
     temp = db.execute("""
                 WITH exc AS (
-                SELECT id AS exercise_id, name, muscle_group, instructions, equipement_id FROM excercises
+                SELECT id AS exercise_id, name, muscle_group, instructions, equipement_id, bodyweight FROM excercises
                 ),
                 primary_muscles AS (
                 SELECT exc_primary_rel.exc_id AS exc_id, muscles.name AS primary_muscle FROM exc_primary_rel
@@ -176,7 +176,28 @@ def getExcCompletionRate(today):
 
 
 def totalWeightLifted(date):
-    return            
+
+    plan_details = getPlanDetails()
+    weightLifted = 0
+
+    for exc in plan_details:
+        
+        executed_exercises = getExecutedExc(exc['exc_id'], date)
+        bodyweight = 0
+        addedWeight = 0
+
+        #if exc has bodyweight component
+        for st in executed_exercises:
+            if exc['bodyweight']:
+                bodyweight = (getUserWeight() * exc['bodyweight'])
+                weightLifted += bodyweight
+
+            if exc['weight']:
+                    addedWeight = st['weight']
+                    weightLifted += addedWeight
+
+
+    return weightLifted 
 
 
 # Query set methods
@@ -193,6 +214,15 @@ def setGoals(height, weight, goalWeight):
 
     connection.commit()
     return "weight goals set"
+
+def addWeightMeasurement(weight, date, time):
+    db.execute("""
+        INSERT INTO weight_history (weight, date, time, user_id)
+        VALUES (?, ?, ?, ?)
+    """, (weight, date, time, session['user_id']))
+
+    connection.commit()
+    return "measurement added"
 
 def setNewPlan(name):
     db.execute("""
