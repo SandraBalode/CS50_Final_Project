@@ -69,3 +69,7 @@ def decrementCounter(length):
         session['currentNumber'] = (length - 1)
     else:
         session['currentNumber'] -= 1
+
+def woIsDone(lst):
+    return lst.count(lst[0]) == len(lst)
+        

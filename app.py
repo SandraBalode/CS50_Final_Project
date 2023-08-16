@@ -8,7 +8,7 @@ from datetime import datetime, date
 import sqlite3
 from sqlite3 import Error
 from helpers import apology, login_required, usd, dict_factory, createCounter
-from helpers import incrementCounter, decrementCounter
+from helpers import incrementCounter, decrementCounter, woIsDone
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans
 from queries import getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc
 from queries import getPlanDetailsRow, addExcToPlanExecution, incrementSet
@@ -265,48 +265,52 @@ def active_workout():
                 for set in selected_checks:
                     temp = set.partition('_')
                     plan_details_id = int(temp[0])
-                    print(plan_details_id)
                     set_number = temp[2]
 
                     row = getPlanDetailsRow(plan_details_id)
                     plan_id = row[0]['plan_id']
-                    exc_order = request.form.get('exc_order')
+                    
                     exc_id = row[0]['exc_id']
                     
                     set_rep_count = request.form.get('rep_count_' + set_number)
                     set_weight = request.form.get('weight_' + set_number)
                     set_duration = request.form.get('duration_' + set_number)
 
-                    addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+                    addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_id, set_number,
                                     set_rep_count, set_weight, set_duration)
-
+                
                 # disable the current exc from the counter list
                 session['counterList'][session['currentNumber']] = False
-                isActiveExc = ''
+
+
+                # if this was the last incomplete exc, finish w/o
+                if woIsDone(session['counterList']): 
+
+                    # forget active exc and counterlists
+                    session.pop('active_exc')
+                    session.pop('currentNumber')
+                    session.pop('counterList')
+
+
+                    return redirect("/wo_summary")
 
                 # change current exc to the next one
                 incrementCounter(exc_count)
                 while session['counterList'][session['currentNumber']] == False:
                     incrementCounter(exc_count)
                 
+
                 session['active_exc'] = plan_details[session['currentNumber']]
-                
 
                 return redirect("/active_workout")
 
-
-            if button_value =='finishWO':
-                # log the workout info to the history
-                # redirect to this workouts generated summary.
-
-                # forget active exc and counterlists
-                session.pop('active_exc')
-                session.pop('currentNumber')
-                session.pop('counterList')
-
-                return redirect("/")
             
             if button_value =='prevExc':
+
+                # remember current checkmarks
+                
+
+                # set new active exercise
                 decrementCounter(exc_count)
                 while session['counterList'][session['currentNumber']] == False:
                     decrementCounter(exc_count)
@@ -315,22 +319,33 @@ def active_workout():
 
 
             if button_value =='nextExc':
+
+                # remember current checkmarks
+                
+
+                # set new active exercise
                 incrementCounter(exc_count)
                 while session['counterList'][session['currentNumber']] == False:
                     incrementCounter(exc_count)
                 
                 session['active_exc'] = plan_details[session['currentNumber']]
-                
+
 
             if button_value == 'addSetBtn':
                 activeExcid = session['active_exc']['exc_id']
                 incrementSet(activeExcid)
 
+                #increment checkmark list
+                
+    
+
 
     if 'active_exc' not in session :
         createCounter(exc_count)
         session['active_exc'] = plan_details[session['currentNumber']]
+
     
+
     return render_template("active_workout.html", activePlanName=getActivePlanName(), exc_count=exc_count, 
                            plan_details=getPlanDetails(), exercises=getExercises(), muscles=getMuscles(), 
                            active_exc=session['active_exc'], active=(session['currentNumber']+1), counterList=session['counterList'])
@@ -347,3 +362,9 @@ def excercises():
     muscles = temp.fetchall()
 
     return render_template("excercises.html", length=length, excercises=exercises, muscles=muscles)
+
+
+@app.route("/wo_summary", methods=["GET", "POST"])
+def wo_summary():
+
+    return render_template("wo_summary.html")

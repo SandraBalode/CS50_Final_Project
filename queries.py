@@ -110,13 +110,13 @@ def addExercise(selectedExcId, set_count, rep_count, weight, duration):
     connection.commit()
     return "Exercise added."
 
-def addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+def addExcToPlanExecution(plan_id, plan_start_date, plan_start_time, exc_id, set_number,
                                     rep_count, weight, duration):
     db.execute("""
-        INSERT INTO plan_execution (plan_id, date, plan_start_time, exc_order, exc_id, set_number,
+        INSERT INTO plan_execution (plan_id, date, plan_start_time, exc_id, set_number,
                                     rep_count, weight, duration, user_id)
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (plan_id, plan_start_date, plan_start_time, exc_order, exc_id, set_number,
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (plan_id, plan_start_date, plan_start_time, exc_id, set_number,
                                     rep_count, weight, duration, session.get("user_id")))
     
     connection.commit()
