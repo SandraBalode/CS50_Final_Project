@@ -7,41 +7,55 @@
 
 {% block main %} 
 
-<div class="border border-dark rounded-1">
-    <div class="row justify-content-center border-bottom border-dark">
-        <div class="col-sm col-md-10 col-lg-8">
-            <h1 class="display-6">Woo! You smashed that workout!</h1>
+<div class="row justify-content-center">
+    <div class="col-sm col-md-8 col-lg-6 border border-dark rounded-1">
+        <div class="row border-bottom border-dark">           
+            <h1 class="display-6">Woo! You smashed that workout!</h1>            
+        </div>                                                                                                
+
+        <div class="row justify-content-center border-bottom border-dark py-3">
+           
+            <h1 class="display-6">Todays stats:</h1>
+
+            <p class="lead">Weight lifted: {{ totalWeightLifted }}kg</p>
+            <p class="lead">Exercise completion Rate: {{ excCompletionRate }}%</p>
+
+            
+
+            {% if isNewPR %}
+                <p class="lead">New PR! </p>
+                <div class="container">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3 justify-content-center">
+                        {% for pr in newPRs %}
+
+                            <div class="col">
+                                <div class="card shadow-sm">
+                                    <img class="bd-placeholder-img card-img-top" src="/static/img/cup.png" alt="PR" width="100%" height="225">
+                                    <div class="card-body">
+                                        <p class="card-text lead">
+                                            {{ pr['exc_name'] }}
+                                        </p>
+                                        <p class="card-text">
+                                            {{ pr['type'] }}: {{ pr['new'] }} {{ pr['measurement'] }}
+                                        </p>
+                                        {% if pr['old'] %}
+                                            <small class="text-muted">
+                                                Previous record: {{ pr['old'] }} {{ pr['measurement'] }} - {{ pr['old_date'] }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
-    </div>                                                                                                
-
-    <div class="row justify-content-center border-bottom border-dark">
-        <div class="col-sm col-md-10 col-lg-8">
-            <h1 class="display-3">Todays stats:</h1>
-
-            <h1 class="display-2">Weight lifted: {{ totalWeightLifted }}kg</h1>
-            <h1 class="display-2">Exercise completion Rate: {{ excCompletionRate }}%</h1>
-            <h1 class="display-2">Performance imporoved: </h1>
-            <ul>
-                <li>exc1 by % compared to last time</li>
-                <li>exc2 by %</li>
-            </ul>
-
-            <h1 class="display-2">New PR!: </h1>
-            <ul>
-                <li>
-                    exc1 -> sets * reps * weight * time
-                    <small>prev pr-> sets * reps * weight * time</small>
-                </li>
-            </ul>
 
 
-        </div>
-    </div>
-
-
-    <div class="row justify-content-center">
-        <div class="col-sm col-md-10 col-lg-8">
-            <h1 class="display-5">Keep going, you [endearement]!</h1>
+        <div class="row justify-content-center py-3">
+            <h1 class="display-5">Keep going, you anxious little pickle!</h1>
         </div>
     </div>
 </div>

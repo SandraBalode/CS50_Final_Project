@@ -200,6 +200,100 @@ def totalWeightLifted(date):
     return weightLifted 
 
 
+def get_one_RM_pr(exc_id):
+    temp = db.execute("""
+        SELECT one_RM, date FROM pr_history
+        WHERE user_id=?
+        AND exc_id=?
+        ORDER BY one_RM DESC
+        LIMIT 2;
+    """, (session['user_id'], exc_id))
+
+    return temp.fetchall()
+
+def get_total_rep_count_pr(exc_id):
+    temp = db.execute("""
+        SELECT total_rep_count, date FROM pr_history
+        WHERE user_id=?
+        AND exc_id=?
+        ORDER BY total_rep_count DESC
+        LIMIT 2;
+    """, (session['user_id'], exc_id))
+
+    return temp.fetchall()
+
+def get_weight_lifted_pr(exc_id):
+    temp = db.execute("""
+        SELECT weight_lifted, date FROM pr_history
+        WHERE user_id=?
+        AND exc_id=?
+        ORDER BY weight_lifted DESC
+        LIMIT 2;
+    """, (session['user_id'], exc_id))
+
+    return temp.fetchall()
+
+
+def get_duration_pr(exc_id):
+    temp = db.execute("""
+        SELECT duration_pr, date FROM pr_history
+        WHERE user_id=?
+        AND exc_id=?
+        ORDER BY duration_pr DESC
+        LIMIT 2;
+    """, (session['user_id'], exc_id))
+
+    return temp.fetchall()
+
+
+def checkNewPRs(date):
+    new_prs = []
+    plan_details = getPlanDetails()
+    for exc in plan_details:
+        # one_RM PR
+        one_rm_pr = get_one_RM_pr(exc['exc_id'])
+        # in case this is the first time exc is done
+        if len(one_rm_pr) == 1 and str(one_rm_pr[0]['date']) == str(date) and one_rm_pr[0]['one_RM'] != 0:
+            new_prs.append({'type': '1 rep Max', 'measurement': 'kg', 'exc_name': exc['name'], 'new': one_rm_pr[0]['one_RM']})
+        
+        if len(one_rm_pr) == 2 and str(one_rm_pr[0]['date']) == str(date) and one_rm_pr[0]['one_RM'] != 0:
+            new_prs.append({'type': '1 rep Max', 'measurement': 'kg', 'exc_name': exc['name'], 'new': one_rm_pr[0]['one_RM'], 'old': one_rm_pr[1]['one_RM'], 'old_date': one_rm_pr[1]['date']})
+            
+
+        # total_rep_count PR
+        total_rep_count_pr = get_total_rep_count_pr(exc['exc_id'])
+        # in case this is the first time exc is done
+        if len(total_rep_count_pr) == 1 and str(total_rep_count_pr[0]['date']) == str(date) and total_rep_count_pr[0]['total_rep_count'] != 0:
+            new_prs.append({'type': 'total rep count', 'measurement': '', 'exc_name': exc['name'], 'new': total_rep_count_pr[0]['total_rep_count']})
+        
+        if len(total_rep_count_pr) == 2 and str(total_rep_count_pr[0]['date']) == str(date) and total_rep_count_pr[0]['total_rep_count'] != 0:
+            
+            new_prs.append({'type': 'total rep count', 'measurement': '', 'exc_name': exc['name'], 'new': total_rep_count_pr[0]['total_rep_count'], 'old': total_rep_count_pr[1]['total_rep_count'], 'old_date': total_rep_count_pr[1]['date']})
+         
+
+        # weight_lifted PR
+        weight_lifted_pr = get_weight_lifted_pr(exc['exc_id'])
+        # in case this is the first time exc is done
+        if len(weight_lifted_pr) == 1 and str(weight_lifted_pr[0]['date']) == str(date) and weight_lifted_pr[0]['weight_lifted'] != 0:
+            new_prs.append({'type': 'weight lifted', 'measurement': 'kg', 'exc_name': exc['name'], 'new': weight_lifted_pr[0]['weight_lifted']})
+        
+        if len(weight_lifted_pr) == 2 and str(weight_lifted_pr[0]['date']) == str(date) and weight_lifted_pr[0]['weight_lifted'] != 0:
+            new_prs.append({'type': 'weight lifted', 'measurement': 'kg', 'exc_name': exc['name'], 'new': weight_lifted_pr[0]['weight_lifted'], 'old': weight_lifted_pr[1]['weight_lifted'], 'old_date': weight_lifted_pr[1]['date']})
+         
+
+        # duration PR
+        duration_pr = get_duration_pr(exc['exc_id'])
+        # in case this is the first time exc is done
+        if len(duration_pr) == 1 and str(duration_pr[0]['date']) == str(date) and duration_pr[0]['duration_pr'] != 0:
+            new_prs.append({'type': 'Max Duration', 'measurement': 'sec', 'exc_name': exc['name'], 'new': duration_pr[0]['duration_pr']})
+        
+        if len(duration_pr) == 2 and str(duration_pr[0]['date']) == str(date) and duration_pr[0]['duration_pr'] != 0:
+            new_prs.append({'type': 'Max Duration', 'measurement': 'sec', 'exc_name': exc['name'], 'new': duration_pr[0]['duration_pr'], 'old': duration_pr[1]['duration_pr'], 'old_date': duration_pr[1]['date']})
+         
+    
+    return new_prs
+
+
 # Query set methods
 
 def setGoals(height, weight, goalWeight):
@@ -264,6 +358,46 @@ def incrementSet(excId):
     
     connection.commit()
     return "Set count incremented"
+
+def setPRHistory(date):
+    plan_details = getPlanDetails()
+    for exc in plan_details:
+        one_RM = 0
+        total_rep_count = 0
+        weight_lifted = 0
+        max_duration = 0
+        bodyweight = 0
+        addedWeight = 0
+
+        plan_execution = getExecutedExc(exc['exc_id'], date)
+        for st in plan_execution:
+            if st['rep_count']:
+                total_rep_count += st['rep_count']
+
+            if st['duration']:
+                if st['duration'] > max_duration:
+                    max_duration = st['duration']
+            
+            if exc['bodyweight']:
+                bodyweight = (getUserWeight() * exc['bodyweight'])
+                weight_lifted += bodyweight
+            
+            if st['weight']:
+                addedWeight = st['weight']
+                weight_lifted += addedWeight
+
+            # check one_RM
+            if one_RM < addedWeight:
+                one_RM = addedWeight
+
+        # Add exc data to pr_history table
+        db.execute("""
+            INSERT INTO pr_history (user_id, exc_id, 'one_RM', total_rep_count, weight_lifted, duration_pr, date)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (session['user_id'], exc['exc_id'], one_RM, total_rep_count, weight_lifted, max_duration, date))
+
+    connection.commit()
+
 
 
 # Query Delete methods

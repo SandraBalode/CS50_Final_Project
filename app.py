@@ -12,7 +12,8 @@ from helpers import apology, login_required, usd, dict_factory, createCounter, \
 from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles, getPlans, \
     getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc, \
     getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate, \
-    getUserWeight, getUserHeight, setGoals, totalWeightLifted, addWeightMeasurement
+    getUserWeight, getUserHeight, setGoals, totalWeightLifted, addWeightMeasurement, \
+    setPRHistory, checkNewPRs
 
 # Configure application
 app = Flask(__name__)
@@ -405,10 +406,14 @@ def wo_summary():
     today = date.today()
 
     excCompletionRate = getExcCompletionRate(today)
-    performanceImprovement = 'TBA'
-    personalRecords = 'TBA'
+    WeightLifted = totalWeightLifted(today)
+    WeightLifted = float("{:.2f}".format(WeightLifted))
 
-    return render_template("wo_summary.html", totalWeightLifted=totalWeightLifted(today), excCompletionRate=round(excCompletionRate*100))
+    setPRHistory(today)
+    newPRs = checkNewPRs(today) 
+    isNewPR = len(newPRs) > 0
+
+    return render_template("wo_summary.html", totalWeightLifted=WeightLifted, excCompletionRate=round(excCompletionRate*100), newPRs=newPRs, isNewPR=isNewPR)
 
 
 @app.route("/my_weight", methods=["GET", "POST"])
