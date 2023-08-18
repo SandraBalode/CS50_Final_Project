@@ -17,4 +17,4 @@ FitBudi
 
 
 1. Set realistic goals of how this should look. 
-2. Write a normal README file. 
+2. Write a normal README file (~500 words). 

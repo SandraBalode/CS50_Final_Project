@@ -9,6 +9,7 @@ from helpers import dict_factory
 from flask import redirect, render_template, session
 
 
+
 # Configure sqlite database connection
 connection = sqlite3.connect("database.db", check_same_thread=False)
 connection.row_factory = dict_factory
@@ -293,6 +294,13 @@ def checkNewPRs(date):
     
     return new_prs
 
+def getWeightData():
+    temp = db.execute("""
+        SELECT * FROM weight_history
+        WHERE user_id=?
+    """, (session['user_id'],))
+    
+    return temp.fetchall()
 
 # Query set methods
 

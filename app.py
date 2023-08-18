@@ -1,11 +1,14 @@
 import os
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, Response
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, date
 import sqlite3
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import numpy as np
 from sqlite3 import Error
 from helpers import apology, login_required, usd, dict_factory, createCounter, \
     incrementCounter, decrementCounter, woIsDone
@@ -13,7 +16,11 @@ from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles,
     getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc, \
     getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate, \
     getUserWeight, getUserHeight, setGoals, totalWeightLifted, addWeightMeasurement, \
-    setPRHistory, checkNewPRs
+    setPRHistory, checkNewPRs, getWeightData
+
+import io
+import base64
+import random
 
 # Configure application
 app = Flask(__name__)
@@ -42,7 +49,7 @@ def index():
         return redirect("/set_weight_goal")
 
 
-    return apology("TO-DO")
+    return render_template("index.html")
 
 @app.route("/set_weight_goal", methods=["GET", "POST"])
 def set_weight_goal():
@@ -419,4 +426,24 @@ def wo_summary():
 @app.route("/my_weight", methods=["GET", "POST"])
 def my_weight():
 
-    return render_template("my_weight.html")
+    if request.method == "POST":
+
+        # Add new measurement and redirect if input submmitted.
+        if request.form.get("enterWeight") == "enterWeight":
+
+            weight = request.form.get("weight")
+
+            today = date.today()
+            time = datetime.now().strftime("%H:%M:%S")
+            addWeightMeasurement(weight, today, time)
+
+            return redirect("/my_weight")
+
+    data = getWeightData()
+
+    dates = [entry['date'] for entry in data]
+    weights = [entry['weight'] for entry in data]
+
+    weightHistory = getWeightData()
+
+    return render_template("my_weight.html", dates=dates, weights=weights, weightHistory=weightHistory)
