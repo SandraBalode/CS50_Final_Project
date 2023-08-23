@@ -16,7 +16,7 @@ from queries import getPlanDetails, getExercises, getActivePlanName, getMuscles,
     getLastCreatedPlan, setNewPlan, deletePlan, addExercise, deleteExc, \
     getPlanDetailsRow, addExcToPlanExecution, incrementSet, getExcCompletionRate, \
     getUserWeight, getUserHeight, setGoals, totalWeightLifted, addWeightMeasurement, \
-    setPRHistory, checkNewPRs, getWeightData
+    setPRHistory, checkNewPRs, getWeightData, createWeek
 
 import io
 import base64
@@ -42,14 +42,53 @@ db = connection.cursor()
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+
+    
+
+    today = date.today()
+    time = datetime.now().strftime("%H:%M:%S")
+
+    if request.method == "POST":
+        if request.form.get("enterWeight") == "enterWeight":
+
+            inputDate = request.form.get("measurementDate")
+            inputWeight= request.form.get("weight")
+
+            addWeightMeasurement(float(inputWeight), inputDate, time)
+
+    # If first time logging in and no weight goals have been set, 
+    # # require weight goal and data input
     weight = getUserWeight()
     height = getUserHeight()
 
     if not weight or not height:
         return redirect("/set_weight_goal")
+    
 
 
-    return render_template("index.html")
+    # weight info
+    data = getWeightData()
+
+    print(data)
+    weights = [entry['weight'] for entry in data]
+
+    datetimes = []
+    for i in range(len(data)):
+        t = data[i]['date'] + 'T' + data[i]['time'] + "Z"
+        w = data[i]['weight']
+        entry = {'date': t, 'weight': w}
+        datetimes.append(entry)
+
+    print(datetimes)
+    length = len(datetimes)
+    
+
+
+    # week info
+    week = createWeek()
+
+    return render_template("index.html", data=data, length=length-1, datetimes=datetimes, weights=weights, today=today, time=time, \
+                           lasteMeasurement=getUserWeight(), week=week)
 
 @app.route("/set_weight_goal", methods=["GET", "POST"])
 def set_weight_goal():

@@ -7,6 +7,162 @@
 
 {% block main %} 
 
+<div class="container py-4">
+    
+    <div class="p-5 mb-4 bg-light rounded-3 jumbotron-bg">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Fitbudi - Your road to a better self!</h1>
+            <p class="col-md-8 fs-4">
+                Achieve, exceed, and thrive with Fitbudi. Our mission is to make fitness accessible and fun, leading you on a journey of self-improvement and personal triumphs.
+            </p>
+        </div>
+    </div>
+
+    <div class="row align-items-md-stretch mb-4">
+
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Weight</h2>
+                <canvas class="img-fluid border rounded-3 shadow-lg mb-4" loading="lazy" width="450" height="300" id="myChart"></canvas>                
+                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#enterWeight">
+                    Enter weight measurement
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Weekly workouts</h2>  
+                <div class="container border border-secondary border-opacity-50 rounded-1">
+                    <div class="row row-cols-7 g-3 justify-content-center">
+                        {% for day in week %}
+
+                            <div class="col">
+                                <div class="row justify-content-center">
+                                    <p>{{ day['weekdayLetter'] }}</p>
+                                    <p>{{ day['singleDate'] }}</p>
+                                    {% if day['workout'] %}
+                                        <label class="col-auto rounded-5">✓</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
 
 
+    <div class="row align-items-md-stretch mb-4">
+
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Explore exercises</h2>
+                
+                <a class="btn btn-outline-secondary btn-lg" href="/excercises">All exercises</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Do the work!</h2>
+                
+                <a class="btn btn-outline-secondary btn-lg" href="/my_workouts">My Plans</a>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- enterWeight modal -->
+<div class="modal fade" id="enterWeight" tabindex="-1" aria-labelledby="enterWeightLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="/" method="post" class="modal-content">
+            <div class="modal-header">
+                
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="/" method="post" class="col-md-6">
+                    <div class="row justify-content-center g-3 py-2"> 
+                        <div class="col-sm-auto">
+                            <input
+                                type="date"
+                                class="form-control text-muted"
+                                id="measurementDate"
+                                name="measurementDate"
+                                value="{{ today }}"
+                                min="2000-01-01"                                
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="row justify-content-center py-2 ps-5">
+                        <input autocomplete="off" class="form-control w-auto col-auto mx-1" id="weight" required name="weight" value="{{ lasteMeasurement }}" type="number" min="0" step="0.1">  
+                    </div>
+                    <div class="row justify-content-center py-2">
+                        <button class="btn btn-dark col-auto py-2" type="submit" name="enterWeight" value="enterWeight">Enter Weight</button>
+                    </div>
+                </form>
+            </div>
+        </form>
+    </div>
+  </div>
+  
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<!-- plot script -->
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            options: {
+              scales: {
+                xAxes: [{
+                  type: 'time',
+                }]
+              },
+              plugins: {
+                legend: {
+                    display: false
+                }
+              }
+            },
+            data: {
+                labels: [
+                {% for entry in datetimes %}
+                    "{{entry['date']}}",
+                {% endfor %}
+                "{{datetimes[length]['date']}}"
+                ],
+                datasets: [{
+                  label: 'Weight, kg',
+                  data: [
+                    {% for entry in datetimes %}
+                        {
+                        t: '{{entry['date']}}',
+                        y: {{entry['weight']}}
+                        },
+                    {% endfor %}
+                    {
+                      t: '{{datetimes[length]['date']}}',
+                      y: {{datetimes[length]['weight']}}
+                    }
+                  ],
+                  
+                  borderColor: ['teal'],
+                  borderWidth: 1
+              }]
+            }
+          });
+</script>
 {% endblock %}

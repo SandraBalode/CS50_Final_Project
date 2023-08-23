@@ -7,7 +7,7 @@ This file is a separation for queries related to excercises and workout plans.
 import sqlite3
 from helpers import dict_factory
 from flask import redirect, render_template, session
-
+from datetime import datetime, date
 
 
 # Configure sqlite database connection
@@ -298,9 +298,61 @@ def getWeightData():
     temp = db.execute("""
         SELECT * FROM weight_history
         WHERE user_id=?
+        ORDER BY date;
     """, (session['user_id'],))
     
     return temp.fetchall()
+
+
+def getPlanExecutionDates():
+    temp = db.execute("""
+        SELECT DISTINCT date FROM plan_execution
+        WHERE user_id = ?
+        ORDER BY date DESC;
+    """, (session['user_id'],))
+
+    dates = []
+    for day in temp.fetchall():
+        dates.append(day['date'])
+    
+    return dates
+
+
+def createWeek():
+    week = [{}, {}, {}, {}, {}, {}, {}]
+    days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+
+    dateToday = datetime.now()
+    today = datetime.now().weekday()
+    day = datetime.now().day
+    
+    planDates = getPlanExecutionDates() #returns a list of distinct dates in desc order
+
+    for i in range(7):
+        dateOfDay = 0
+
+        if i < today:
+            week[i]['weekdayLetter'] = days[i]
+            dateOfDay = day - today
+             
+        if i == today:
+            week[i]['weekdayLetter'] = days[i]
+            dateOfDay = day
+
+        if i > today:
+            week[i]['weekdayLetter'] = days[i]
+            dateOfDay = (i - today) + day
+        
+        week[i]['singleDate'] = dateOfDay
+        
+
+        dateToCheck = dateToday.replace(day=dateOfDay)
+        dateToCheck = str(dateToCheck.date())
+        if dateToCheck in planDates:
+            week[i]['workout'] = True
+    
+    
+    return week
 
 # Query set methods
 
@@ -322,6 +374,21 @@ def addWeightMeasurement(weight, date, time):
         INSERT INTO weight_history (weight, date, time, user_id)
         VALUES (?, ?, ?, ?)
     """, (weight, date, time, session['user_id']))
+
+    temp = db.execute("""
+        SELECT weight FROM weight_history
+        WHERE user_id=?
+        ORDER BY date, time DESC
+        LIMIT 1;
+    """, (session['user_id'],))
+    lastMeasuredWeight = temp.fetchall()
+
+    #update user weight data
+    db.execute("""
+        UPDATE users
+        SET weight=?
+        WHERE id=?
+    """, (lastMeasuredWeight[0]['weight'], session['user_id']))
 
     connection.commit()
     return "measurement added"

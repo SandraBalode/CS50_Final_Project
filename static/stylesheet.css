@@ -24,3 +24,10 @@ html, body {
 .checkBtn:hover {
   background-color: green !important;
 }
+
+.jumbotron-bg {
+  background-image: linear-gradient(to right, rgba(128, 128, 128, 0.5), rgba(128, 128, 128, 0.5)), url('/static/img/home_background.jpg');
+  background-size: cover;
+  background-position: center center;
+  color: #fff;
+}

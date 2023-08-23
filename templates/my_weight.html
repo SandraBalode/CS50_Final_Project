@@ -47,41 +47,44 @@
     var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
+            options: {
+              scales: {
+                xAxes: [{
+                  type: 'time',
+                }]
+              },
+              plugins: {
+                legend: {
+                    display: false
+                }
+              }
+            },
             data: {
                 labels: [
-                    {% for date in dates %}
-                        '{{ date }}',
-                    {% endfor %}
+                {% for entry in datetimes %}
+                    "{{entry['date']}}",
+                {% endfor %}
+                "{{datetimes[length]['date']}}"
                 ],
                 datasets: [{
-                    label: 'Weight, kg',
-                    data: [
-                        {% for weight in weights %}
-                            {{ weight }},
-                        {% endfor %}
-                    ],
-                    backgroundColor: ['white'],
-                    borderColor: ['teal'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }],
-                    xAxes: [{
-
-                    }]
-                },
-                plugins: {
-                    legend: {
-                        display: false
+                  label: 'Weight, kg',
+                  data: [
+                    {% for entry in datetimes %}
+                        {
+                        t: '{{entry['date']}}',
+                        y: {{entry['weight']}}
+                        },
+                    {% endfor %}
+                    {
+                      t: '{{datetimes[length]['date']}}',
+                      y: {{datetimes[length]['weight']}}
                     }
-                }
+                  ],
+                  
+                  borderColor: ['teal'],
+                  borderWidth: 1
+              }]
             }
-        });
+          });
 </script>
 {% endblock %}
