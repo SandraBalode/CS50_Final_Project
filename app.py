@@ -476,10 +476,17 @@ def my_weight():
             return redirect("/my_weight")
 
     data = getWeightData()
-
-    dates = [entry['date'] for entry in data]
     weights = [entry['weight'] for entry in data]
+
+    datetimes = []
+    for i in range(len(data)):
+        t = data[i]['date'] + 'T' + data[i]['time'] + "Z"
+        w = data[i]['weight']
+        entry = {'date': t, 'weight': w}
+        datetimes.append(entry)
+
+    length = len(datetimes)
 
     weightHistory = getWeightData()
 
-    return render_template("my_weight.html", dates=dates, weights=weights, weightHistory=weightHistory)
+    return render_template("my_weight.html", datetimes=datetimes, length=length-1, weights=weights, weightHistory=weightHistory)

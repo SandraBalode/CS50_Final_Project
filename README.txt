@@ -1,20 +1,38 @@
-FitBudi
-
-1. Create a workout plan (daily, weekly, 2 weeks, monthly (can choose time frame of the workout plan))
-    Also provide a pre-designed workout plan as well as the option to create their own plan.
-2. Set goals (weight goal, specific excercise goals)
-3. Exercise Library: Include a library of exercises with detailed descriptions, images, and videos. 
-    Users can explore different exercises and learn proper form and technique. 
-    Categorize exercises based on muscle groups or fitness goals for easy navigation.
-        (A database of excercises and their respective muscle groups and necessary equipment)
-4. monitor performance (statistics and visualisation)
-5. Start workout - do the plan of choice (add/remove rest-times)
-6. Muscle recovery times? 
-7. Activity reminders for the main workout plan.
-8. Choose a gym (set pof available equipment) that filters the excercises. 
-9. User registration and Profiles
-10. Workout program (how to improve over the weeks/ upscale the workout intensity and how hard the excercises should be)
+# FitBudi
+#### Video Demo:  <https://youtu.be/RBELO1fGfBU>
+#### Description:
 
 
-1. Set realistic goals of how this should look. 
-2. Write a normal README file (~500 words). 
+## Overview
+
+Welcome to my CS50 final project! This fitness app is designed to help users achieve their fitness goals, track their progress, and stay motivated on their journey to a healthier lifestyle. The app utilizes Flask, Jinja templating, Python, HTML, JavaScript, CSS, as well as several Python libraries for enhanced functionality. It also integrates Bootstrap for responsive design and Chart.js for interactive data visualization.
+
+## Features
+
+- **User Registration and Authentication:** Users can create accounts, log in securely, and log out. Passwords are hashed for security.
+- **Personalized Dashboards:** Each user has a unique dashboard where they can view their workout history and weight goal progress.
+- **Workout Logging:** Users can log their workouts, including exercise details, sets, reps, and weights.
+- **Exercise Library:** A library of exercises with descriptions, images, and videos helps users learn proper techniques.
+- **Progress Tracking:** Interactive charts powered by Chart.js provide visual representations of users' progress over time.
+- **Goal Setting:** Users can set specific weight goals and track their achievements.
+- **Responsive Design:** Bootstrap is implemented for a seamless and responsive user experience across devices.
+
+## Installation
+
+1. Clone this repository: `git clone https://github.com/SandraBalode/CS50_Final_Project.git`
+2. Navigate to the project directory: `cd CS50_Final_Project`
+3. Install required dependencies: `pip install -r requirements.txt`
+5. Run the app: `python -m flask run`
+
+## Usage
+
+1. Open your web browser and navigate to the specified port.
+2. Register an account or log in if you already have one.
+3. Explore the exercise library, log your workouts, set goals, and view your progress.
+4. Enjoy your fitness journey with our app!
+
+## Credits
+
+- Developed by Sandra Balode
+- Built using Flask, Jinja templating, Python, HTML, JavaScript, CSS
+- Utilizes Bootstrap for responsive design and Chart.js for data visualization
