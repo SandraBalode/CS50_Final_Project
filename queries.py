@@ -333,7 +333,7 @@ def createWeek():
 
         if i < today:
             week[i]['weekdayLetter'] = days[i]
-            dateOfDay = day - today
+            dateOfDay = day - (today - i)
              
         if i == today:
             week[i]['weekdayLetter'] = days[i]
@@ -350,8 +350,7 @@ def createWeek():
         dateToCheck = str(dateToCheck.date())
         if dateToCheck in planDates:
             week[i]['workout'] = True
-    
-    
+
     return week
 
 # Query set methods

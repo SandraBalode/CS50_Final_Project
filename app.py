@@ -68,8 +68,6 @@ def index():
 
     # weight info
     data = getWeightData()
-
-    print(data)
     weights = [entry['weight'] for entry in data]
 
     datetimes = []
@@ -79,7 +77,6 @@ def index():
         entry = {'date': t, 'weight': w}
         datetimes.append(entry)
 
-    print(datetimes)
     length = len(datetimes)
     
 
