@@ -1,11 +1,10 @@
 # FitBudi
 #### Video Demo:  <https://youtu.be/RBELO1fGfBU>
-#### Description:
-
+## Fitness App - CS50 Final Project
 
 ## Overview
 
-Welcome to my CS50 final project! This fitness app is designed to help users achieve their fitness goals, track their progress, and stay motivated on their journey to a healthier lifestyle. The app utilizes Flask, Jinja templating, Python, HTML, JavaScript, CSS, as well as several Python libraries for enhanced functionality. It also integrates Bootstrap for responsive design and Chart.js for interactive data visualization.
+Welcome to the Fitness App, an exceptional digital fitness companion meticulously developed as the crowning achievement of the CS50 final project. This all-encompassing application serves as a dedicated guide on users' transformative health and fitness journeys. Empowering each individual, the app offers personalized workout tracking, robust goal establishment, and vibrant visualization of their advancement. Powered by the synergy of Flask, Jinja templating, Python, HTML, JavaScript, and CSS, the Fitness App seamlessly integrates Bootstrap and Chart.js, ensuring a user-friendly and captivating experience across devices. The meticulously organized file structure encompasses essential components, including user authentication, dynamic data presentation, and interactive visual aids. With a database storing user achievements and workout progress, the Fitness App proves to be a powerful, intuitive, and aesthetically engaging tool that uplifts and inspires users on their path to better health.
 
 ## Features
 
@@ -23,6 +22,23 @@ Welcome to my CS50 final project! This fitness app is designed to help users ach
 2. Navigate to the project directory: `cd CS50_Final_Project`
 3. Install required dependencies: `pip install -r requirements.txt`
 5. Run the app: `python -m flask run`
+
+## Files Included
+
+- `_pycache_` folder: Stores compiled Python files for faster execution.
+- `flask_session` folder: Stores session files for user authentication.
+- `node_modules` folder: Contains dependencies for Node.js packages (e.g., JavaScript libraries).
+- `static` folder: Holds static assets such as images, videos, JavaScript, and CSS.
+    - `img` folder: Contains images used in the app.
+    - `video` folder: Contains videos for instructional content.
+    - `interactions.js`: JavaScript code handling interactive features.
+    - `stylesheet.css`: Custom CSS for styling.
+- `templates` folder: Holds all the HTML templates used in the app.
+- `app.py`: The main Python application file that contains the app's routes and logic.
+- `database.db`: The SQLite database storing user information, workout data, and progress.
+- `helpers.py`: A Python script containing helper functions.
+- `queries.py`: A Python script with SQLite queries used in the app.
+- `package.json` and `package-lock.json`: Configuration files for Node.js packages.
 
 ## Usage
 
